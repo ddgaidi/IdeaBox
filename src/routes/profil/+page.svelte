@@ -1,19 +1,19 @@
 <script>
     import Navbar from '../../lib/components/Navbar/Navbar.svelte';
+    import Register from '../../lib/components/Register/Register.svelte';
     import Footer from '../../lib/components/Footer/Footer.svelte';
-    import Login from '../../lib/components/Login/Login.svelte';
 
     import '../../app.css';
 </script>
 
 <svelte:head>
-    <title>Connexion - IdeaBox</title>
-    <meta name="description" content="Page de connexion de IdeaBox" />
+    <title>Profil - IdeaBox</title>
+    <meta name="description" content="Profil de IdeaBox" />
     <meta content="#8067FF" data-react-helmet="true" name="theme-color"/>
 </svelte:head>
 
 <Navbar />
 
-<Login />
+<Register />
 
 <Footer />

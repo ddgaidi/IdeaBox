@@ -1,2 +1,19 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script>
+    import Navbar from '../../lib/components/Navbar/Navbar.svelte';
+    import Register from '../../lib/components/Register/Register.svelte';
+    import Footer from '../../lib/components/Footer/Footer.svelte';
+
+    import '../../app.css';
+</script>
+
+<svelte:head>
+    <title>Inscription - IdeaBox</title>
+    <meta name="description" content="Page d'inscription de IdeaBox" />
+    <meta content="#8067FF" data-react-helmet="true" name="theme-color"/>
+</svelte:head>
+
+<Navbar />
+
+<Register />
+
+<Footer />

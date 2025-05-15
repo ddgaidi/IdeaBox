@@ -1,38 +1,41 @@
-# sv
+# 💡 IdeaBox
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+**IdeaBox** est une plateforme communautaire de suggestions où les utilisateurs peuvent proposer des idées, voter pour ou contre celles des autres, et voir le tout se mettre à jour en temps réel.
 
-## Creating a project
+---
 
-If you're seeing this, you've probably already done this step. Congrats!
+## 🚀 Fonctionnalités
+
+- 🔐 **Connexion / Inscription** des utilisateurs
+- 🧠 **Ajout d'idées** par tous les membres connectés
+- 👍👎 **Votes pour et contre** sur chaque suggestion
+- 🕒 **Mise à jour en temps réel** via WebSocket (Socket.IO)
+- 🔍 **Filtrage dynamique** par popularité ou date *(fonctionnalité bonus)*
+
+---
+
+## 🛠️ Technologies utilisées
+
+### Frontend
+- [SvelteKit](https://kit.svelte.dev/) — Framework moderne fullstack
+- [TailwindCSS](https://tailwindcss.com/) — Utilitaires CSS rapides et responsives
+- TypeScript
+
+### Backend
+- [Express.js](https://expressjs.com/) — Serveur web Node.js léger
+- [Socket.IO](https://socket.io/) — Temps réel pour la synchronisation des votes et suggestions
+- [SQLite](https://sqlite.org/) — Base de données légère et embarquée
+- [CORS](https://www.npmjs.com/package/cors), [body-parser](https://www.npmjs.com/package/body-parser)
+
+---
+
+## 📦 Installation
+
+### 1. Cloner le projet
 
 ```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+git clone https://github.com/ddgaidi/ideabox.git
+cd ideabox
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+By DML
