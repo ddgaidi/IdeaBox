@@ -1,5 +1,7 @@
 <script>
     import Navbar from '../lib/components/Navbar/Navbar.svelte';
+    import About from '../lib/components/Accueil/About/About.svelte';
+    import Suggest from '../lib/components/Accueil/Suggest/Suggest.svelte';
     import Footer from '../lib/components/Footer/Footer.svelte';
 
     import '../app.css';
@@ -12,5 +14,9 @@
 </svelte:head>
 
 <Navbar />
+
+<About />
+
+<Suggest />
 
 <Footer />

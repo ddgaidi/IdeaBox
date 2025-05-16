@@ -1,6 +1,6 @@
 <script>
     import Navbar from '../../lib/components/Navbar/Navbar.svelte';
-    import Register from '../../lib/components/Register/Register.svelte';
+    import Profil from '$lib/components/Profil/Profil.svelte';
     import Footer from '../../lib/components/Footer/Footer.svelte';
 
     import '../../app.css';
@@ -14,6 +14,6 @@
 
 <Navbar />
 
-<Register />
+<Profil />
 
 <Footer />

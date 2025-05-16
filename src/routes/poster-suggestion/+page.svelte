@@ -1,5 +1,6 @@
 <script>
     import Navbar from '../../lib/components/Navbar/Navbar.svelte';
+    import Poster from '../../lib/components/Poster/Poster.svelte';
     import Footer from '../../lib/components/Footer/Footer.svelte';
 
     import '../../app.css';
@@ -12,5 +13,7 @@
 </svelte:head>
 
 <Navbar />
+
+<Poster />
 
 <Footer />

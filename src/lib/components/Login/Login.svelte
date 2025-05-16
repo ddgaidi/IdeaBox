@@ -1,43 +1,85 @@
 <script lang="ts">
+    import { goto } from '$app/navigation';
     let email: string = '';
-    let pseudonyme: string = '';
     let password: string = '';
 
-    const handleLogin = () => {
-        if (email.includes('@')) {
-            console.log('Connexion avec email:', email);
-        } else {
-            pseudonyme = email; // Si ce n'est pas un email, on considère que c'est un pseudonyme
-            console.log('Connexion avec pseudonyme:', pseudonyme);
+    const handleLogin = async () => {
+        if (!email || !password) {
+            alert('Veuillez entrer un email/pseudonyme et un mot de passe.');
+            return;
         }
-        console.log('Mot de passe:', password);
-        // Ajoutez ici la logique pour la connexion
+
+        try {
+            const response = await fetch('http://localhost:3000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ login: email, password }), // login peut être un pseudonyme ou un email
+            });
+
+            if (!response.ok) {
+                const errorData = await response.text();
+                alert(`Erreur : ${errorData}`);
+                return;
+            }
+
+            const { token } = await response.json();
+            localStorage.setItem('jwt', token); // Stocker le token dans le localStorage
+            alert('Connexion réussie ! Bienvenue.');
+            await goto('/profil'); // Aller à la page profil
+        } catch (err) {
+            console.error(err);
+            alert('Une erreur est survenue, veuillez réessayer plus tard.');
+        }
     };
 </script>
 
-<div class="flex items-center justify-center h-screen" id="first-container">
-    <div class="flex-col bg-[#3771D3] py-10 px-32 rounded-3xl" id="login-or-register-container">
-        <h2 class="text-center text-white font-bold text-2xl mb-5 uppercase">Connexion</h2>
+<section class="relative text-white min-h-screen flex items-center justify-center px-6 md:px-12">
+    <div class="container max-w-md mx-auto bg-white rounded-lg p-8 text-gray-900 shadow-lg animate-fade-in">
+        <h2 class="text-3xl font-extrabold text-purple-700 text-center mb-6">Connexion</h2>
+        <p class="text-center text-gray-600 mb-6">Entrez vos identifiants pour accéder à votre compte.</p>
 
-        <input
-                type="text"
-                placeholder="Email ou Pseudonyme"
-                bind:value={email}
-                class="w-full mb-4 px-4 py-2 rounded-lg bg-white text-black"
-        />
+        <div>
+            <input
+              type="text"
+              bind:value={email}
+              placeholder="Email ou Pseudonyme"
+              class="w-full mb-4 px-4 py-2 border rounded-lg bg-gray-100 focus:ring"
+            />
+            <input
+              type="password"
+              bind:value={password}
+              placeholder="Mot de passe"
+              class="w-full mb-6 px-4 py-2 border rounded-lg bg-gray-100 focus:ring"
+            />
+            <button
+              on:click={handleLogin}
+              class="w-full bg-indigo-600 text-white py-2 rounded-lg shadow hover:bg-indigo-500 transition"
+            >
+                Se connecter
+            </button>
+        </div>
 
-        <input
-                type="password"
-                placeholder="Mot de passe"
-                bind:value={password}
-                class="w-full mb-6 px-4 py-2 rounded-lg bg-white text-black"
-        />
-
-        <button
-                on:click={handleLogin}
-                class="w-full bg-white hover:bg-[#4D83DF] text-[#4D83DF] hover:text-white font-bold py-2 rounded-full duration-300 transition-all cursor-pointer"
-        >
-            Se connecter
-        </button>
+        <div class="text-center mt-6">
+            <p class="text-gray-600">
+                Vous n'avez pas de compte ?
+                <a href="/register" class="text-indigo-600 hover:underline">Inscrivez-vous</a>
+            </p>
+        </div>
     </div>
-</div>
+</section>
+
+<style>
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .animate-fade-in {
+        animation: fade-in 0.6s ease-in-out;
+    }
+</style>

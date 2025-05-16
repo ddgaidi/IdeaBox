@@ -1,54 +1,90 @@
 <script lang="ts">
-    let email: string = '';
+    import { goto } from '$app/navigation';
     let pseudonyme: string = '';
+    let email: string = '';
     let password: string = '';
 
-    const handleLogin = () => {
-        if (email.includes('@')) {
-            console.log('Connexion avec email:', email);
-        } else {
-            pseudonyme = email; // Si ce n'est pas un email, on considère que c'est un pseudonyme
-            console.log('Connexion avec pseudonyme:', pseudonyme);
+    const handleRegister = async () => {
+        if (!pseudonyme || !email || !password) {
+            alert('Veuillez remplir tous les champs.');
+            return;
         }
-        console.log('Mot de passe:', password);
-        // Ajoutez ici la logique pour la connexion
+
+        try {
+            const response = await fetch('http://localhost:3000/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pseudonyme, email, password }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.text();
+                alert(`Erreur : ${errorData}`);
+                return;
+            }
+
+            alert('Inscription réussie ! Vous pouvez maintenant vous connecter.');
+            await goto('/login'); // Redirection vers la page de connexion
+        } catch (err) {
+            console.error(err);
+            alert('Une erreur est survenue, veuillez réessayer plus tard.');
+        }
     };
 </script>
 
-<div class="flex items-center justify-center h-screen" id="first-container">
-    <div class="flex-col items-center justify-center bg-[#3771D3] py-10 px-32 rounded-3xl" id="login-or-register-container">
-        <h2 class="text-center text-white font-bold text-2xl mb-5 uppercase">Inscription</h2>
+<section class="relative text-white min-h-screen flex items-center justify-center px-6 md:px-12">
+    <div class="container max-w-md mx-auto bg-white rounded-lg p-8 text-gray-900 shadow-lg animate-fade-in">
+        <h2 class="text-3xl font-extrabold text-purple-700 text-center mb-6">Inscription</h2>
+        <p class="text-center text-gray-600 mb-6">Rejoignez IdeaBox dès maintenant !</p>
 
-        <input
-                type="text"
-                placeholder="Pseudonyme"
-                bind:value={pseudonyme}
-                class="w-full mb-4 px-4 py-2 rounded-lg bg-white text-black"
-        />
+        <div>
+            <input
+              type="text"
+              bind:value={pseudonyme}
+              placeholder="Pseudonyme"
+              class="w-full mb-4 px-4 py-2 border rounded-lg bg-gray-100 focus:ring"
+            />
+            <input
+              type="email"
+              bind:value={email}
+              placeholder="Email"
+              class="w-full mb-4 px-4 py-2 border rounded-lg bg-gray-100 focus:ring"
+            />
+            <input
+              type="password"
+              bind:value={password}
+              placeholder="Mot de passe"
+              class="w-full mb-6 px-4 py-2 border rounded-lg bg-gray-100 focus:ring"
+            />
+            <button
+              on:click={handleRegister}
+              class="w-full bg-indigo-600 text-white py-2 rounded-lg shadow hover:bg-indigo-500 transition"
+            >
+                S'inscrire
+            </button>
+        </div>
 
-        <input
-                type="text"
-                placeholder="Email"
-                bind:value={email}
-                class="w-full mb-4 px-4 py-2 rounded-lg bg-white text-black"
-        />
-
-        <input
-                type="password"
-                placeholder="Mot de passe"
-                bind:value={password}
-                class="w-full mb-6 px-4 py-2 rounded-lg bg-white text-black"
-        />
-
-        <button
-                on:click={handleLogin}
-                class="w-full bg-white hover:bg-[#4D83DF] text-[#4D83DF] hover:text-white font-bold py-2 rounded-full duration-300 transition-all cursor-pointer"
-        >
-            S'inscrire
-        </button>
-
-        <div class="flex items-center justify-center mt-5" id="">
-            <a href="/login" class="underline hover:no-underline text-white text-lg font-semibold">Vous avez déjà un compte ?</a>
+        <div class="text-center mt-6">
+            <p class="text-gray-600">
+                Vous avez déjà un compte ?
+                <a href="/login" class="text-indigo-600 hover:underline">Connectez-vous</a>
+            </p>
         </div>
     </div>
-</div>
+</section>
+
+<style>
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .animate-fade-in {
+        animation: fade-in 0.6s ease-in-out;
+    }
+</style>

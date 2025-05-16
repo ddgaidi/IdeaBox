@@ -1,6 +1,14 @@
-<div class="flex fixed bottom-0 w-full items-center justify-center bg-[#3771D3] py-3" id="footer-container">
-    <div class="flex-col justify-center items-center text-white">
-        <p class="text-sm text-center">© 2025 IdeaBox Tous droits réservés.</p>
-        <p class="text-sm text-center">Fais avec ❤️ par <a class="underline hover:no-underline" href="https://github.com/ddgaidi" target="_blank">DML</a></p>
+<footer class="bg-gradient-to-b from-purple-600 to-indigo-900 text-white py-6">
+    <div class="container mx-auto px-6 text-center">
+        <p class="text-sm">© 2025 IdeaBox - Tous droits réservés.</p>
+        <p class="text-sm mt-2">
+            Fait avec ❤️ par
+            <a
+              href="https://github.com/ddgaidi"
+              target="_blank"
+              class="underline hover:text-indigo-300 transition-colors duration-300"
+            >DML</a
+            >.
+        </p>
     </div>
-</div>
+</footer>
