@@ -75,7 +75,7 @@
             return;
         }
         if (newEmail.trim() === currentUser.email) {
-            emailChangeMessage = 'La nouvelle adresse e-mail est identique à l\'ancienne.';
+            emailChangeMessage = 'La nouvelle adresse e-mail est identique à l\'ancien.';
             emailChangeStatus = 'error';
             return;
         }
@@ -174,26 +174,26 @@
     }
 </script>
 
-<div class="bg-white min-h-screen max-md:pt-32 p-4 sm:p-8 font-sans">
-    <header class="mb-12 text-center">
-        <h1 class="text-5xl font-bold text-[#8128c9]">
-            Itis<span class="text-gray-800">Game</span>
+<div class="min-h-screen p-4 sm:p-8 font-sans bg-gradient-to-br from-blue-50 to-white">
+    <header class="mb-10 text-center">
+        <h1 class="text-5xl font-extrabold text-blue-700 drop-shadow-md animate-fade-in-down">
+            Idea<span class="text-gray-800">Box</span>
         </h1>
-        <p class="text-xl text-gray-600 mt-2">Gérez les informations de votre compte.</p>
+        <p class="text-xl text-gray-600 mt-2 animate-fade-in-down delay-100">Gérez les informations de votre compte.</p>
     </header>
 
     <main class="max-w-2xl px-4 mx-auto space-y-12">
-        <h2 class="text-3xl font-semibold text-gray-800 mb-8 text-center">Mon Profil</h2>
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center animate-fade-in-up">Mon Profil</h2>
 
-        <section class="bg-gray-50 p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
-            <h3 class="text-2xl font-semibold text-gray-700 mb-6 flex items-center">
-                <User class="h-6 w-6 mr-3 text-[#8128c9]" />
+        <section class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl border border-blue-100 animate-fade-in-up">
+            <h3 class="text-2xl font-bold text-gray-700 mb-6 flex items-center">
+                <User class="h-6 w-6 mr-3 text-blue-600" />
                 Changer de Pseudonyme
             </h3>
             <form on:submit|preventDefault={handleChangePseudo} class="space-y-4">
                 <div>
                     <label for="currentPseudo" class="block text-sm font-medium text-gray-500">Pseudo actuel :</label>
-                    <p class="text-lg font-semibold text-gray-800 mt-1">{currentUser.pseudo}</p>
+                    <p class="text-lg font-bold text-gray-800 mt-1">{currentUser.pseudo}</p>
                 </div>
                 <div>
                     <label for="newPseudo" class="block text-sm font-medium text-gray-700 mb-1">Nouveau pseudonyme</label>
@@ -202,41 +202,41 @@
                             <Pencil class="h-5 w-5 text-gray-400" />
                         </div>
                         <input
-                                type="text"
-                                name="newPseudo"
-                                id="newPseudo"
-                                bind:value={newPseudo}
-                                required
-                                minlength="3"
-                                class="focus:ring-[#8128c9] focus:border-[#8128c9] block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2.5"
-                                placeholder="Nouveau pseudo"
+                          type="text"
+                          name="newPseudo"
+                          id="newPseudo"
+                          bind:value={newPseudo}
+                          required
+                          minlength="3"
+                          class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2.5 transition-all duration-200"
+                          placeholder="Nouveau pseudo"
                         />
                     </div>
                 </div>
                 {#if pseudoChangeMessage}
-                    <div class={`p-3 rounded-md text-sm flex items-center ${pseudoChangeStatus === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    <div class={`p-3 rounded-md text-sm flex items-center ${pseudoChangeStatus === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} shadow-md`}>
                         {#if pseudoChangeStatus === 'success'} <CheckCircle class="h-5 w-5 mr-2"/> {:else} <AlertCircle class="h-5 w-5 mr-2"/> {/if}
                         {pseudoChangeMessage}
                     </div>
                 {/if}
                 <button
-                        type="submit"
-                        class="w-full cursor-pointer flex items-center justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-[#8128c9] hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8128c9] transition-colors duration-300"
+                  type="submit"
+                  class="w-full cursor-pointer flex items-center justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-lg text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105"
                 >
                     Sauvegarder le Pseudo
                 </button>
             </form>
         </section>
 
-        <section class="bg-gray-50 p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
-            <h3 class="text-2xl font-semibold text-gray-700 mb-6 flex items-center">
-                <Mail class="h-6 w-6 mr-3 text-[#8128c9]" />
+        <section class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl border border-blue-100 animate-fade-in-up">
+            <h3 class="text-2xl font-bold text-gray-700 mb-6 flex items-center">
+                <Mail class="h-6 w-6 mr-3 text-blue-600" />
                 Changer d'Adresse E-mail
             </h3>
             <form on:submit|preventDefault={handleChangeEmail} class="space-y-4">
                 <div>
                     <label for="currentEmail" class="block text-sm font-medium text-gray-500">E-mail actuel :</label>
-                    <p class="text-lg font-semibold text-gray-800 mt-1">{currentUser.email}</p>
+                    <p class="text-lg font-bold text-gray-800 mt-1">{currentUser.email}</p>
                 </div>
                 <div>
                     <label for="newEmail" class="block text-sm font-medium text-gray-700 mb-1">Nouvelle adresse e-mail</label>
@@ -245,13 +245,13 @@
                             <Pencil class="h-5 w-5 text-gray-400" />
                         </div>
                         <input
-                                type="email"
-                                name="newEmail"
-                                id="newEmail"
-                                bind:value={newEmail}
-                                required
-                                class="focus:ring-[#8128c9] focus:border-[#8128c9] block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2.5"
-                                placeholder="nouvel.email@example.com"
+                          type="email"
+                          name="newEmail"
+                          id="newEmail"
+                          bind:value={newEmail}
+                          required
+                          class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2.5 transition-all duration-200"
+                          placeholder="nouvel.email@example.com"
                         />
                     </div>
                 </div>
@@ -264,34 +264,34 @@
                             <Lock class="h-5 w-5 text-gray-400" />
                         </div>
                         <input
-                                type="password"
-                                name="currentPasswordForEmail"
-                                id="currentPasswordForEmail"
-                                bind:value={currentPasswordForEmail}
-                                required
-                                class="focus:ring-[#8128c9] focus:border-[#8128c9] block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2.5"
-                                placeholder="Votre mot de passe actuel"
+                          type="password"
+                          name="currentPasswordForEmail"
+                          id="currentPasswordForEmail"
+                          bind:value={currentPasswordForEmail}
+                          required
+                          class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2.5 transition-all duration-200"
+                          placeholder="Votre mot de passe actuel"
                         />
                     </div>
                 </div>
                 {#if emailChangeMessage}
-                    <div class={`p-3 rounded-md text-sm flex items-center ${emailChangeStatus === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    <div class={`p-3 rounded-md text-sm flex items-center ${emailChangeStatus === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} shadow-md`}>
                         {#if emailChangeStatus === 'success'} <CheckCircle class="h-5 w-5 mr-2"/> {:else} <AlertCircle class="h-5 w-5 mr-2"/> {/if}
                         {emailChangeMessage}
                     </div>
                 {/if}
                 <button
-                        type="submit"
-                        class="w-full cursor-pointer flex items-center justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-[#8128c9] hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8128c9] transition-colors duration-300"
+                  type="submit"
+                  class="w-full cursor-pointer flex items-center justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-lg text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300"
                 >
                     Sauvegarder l'Email
                 </button>
             </form>
         </section>
 
-        <section class="bg-gray-50 p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
-            <h3 class="text-2xl font-semibold text-gray-700 mb-6 flex items-center">
-                <Lock class="h-6 w-6 mr-3 text-[#8128c9]" />
+        <section class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl border border-blue-100 animate-fade-in-up">
+            <h3 class="text-2xl font-bold text-gray-700 mb-6 flex items-center">
+                <Lock class="h-6 w-6 mr-3 text-blue-600" />
                 Changer de Mot de Passe
             </h3>
             <form on:submit|preventDefault={handleChangePassword} class="space-y-4">
@@ -304,23 +304,24 @@
                             <Lock class="h-5 w-5 text-gray-400" />
                         </div>
                         <input
-                                type={showCurrentPassword ? 'text' : 'password'}
-                                name="currentPassword"
-                                id="currentPassword"
-                                bind:value={currentPassword}
-                                required
-                                class="focus:ring-[#8128c9] focus:border-[#8128c9] block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md py-2.5"
-                                placeholder="Votre mot de passe actuel"
+                          type={showCurrentPassword ? 'text' : 'password'}
+                          name="currentPassword"
+                          id="currentPassword"
+                          bind:value={currentPassword}
+                          required
+                          class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md py-2.5 transition-all duration-200"
+                          placeholder="Votre mot de passe actuel"
                         />
                         <button
-                                type="button"
-                                on:click={() => showCurrentPassword = !showCurrentPassword}
-                                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                          type="button"
+                          on:click={() => showCurrentPassword = !showCurrentPassword}
+                          class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-500 hover:text-blue-600 transition-colors duration-200"
+                          aria-label={showCurrentPassword ? "Cacher le mot de passe" : "Afficher le mot de passe"}
                         >
                             {#if showCurrentPassword}
-                                <EyeOff class="h-5 w-5 text-gray-400" />
+                                <Eye class="h-5 w-5" />
                             {:else}
-                                <Eye class="h-5 w-5 text-gray-400" />
+                                <EyeOff class="h-5 w-5" />
                             {/if}
                         </button>
                     </div>
@@ -334,24 +335,25 @@
                             <Lock class="h-5 w-5 text-gray-400" />
                         </div>
                         <input
-                                type={showNewPassword ? 'text' : 'password'}
-                                name="newPassword"
-                                id="newPassword"
-                                bind:value={newPassword}
-                                required
-                                minlength="6"
-                                class="focus:ring-[#8128c9] focus:border-[#8128c9] block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md py-2.5"
-                                placeholder="Nouveau mot de passe"
+                          type={showNewPassword ? 'text' : 'password'}
+                          name="newPassword"
+                          id="newPassword"
+                          bind:value={newPassword}
+                          required
+                          minlength="6"
+                          class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md py-2.5 transition-all duration-200"
+                          placeholder="Nouveau mot de passe"
                         />
                         <button
-                                type="button"
-                                on:click={() => showNewPassword = !showNewPassword}
-                                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                          type="button"
+                          on:click={() => showNewPassword = !showNewPassword}
+                          class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-500 hover:text-blue-600 transition-colors duration-200"
+                          aria-label={showNewPassword ? "Cacher le mot de passe" : "Afficher le mot de passe"}
                         >
                             {#if showNewPassword}
-                                <EyeOff class="h-5 w-5 text-gray-400" />
+                                <Eye class="h-5 w-5" />
                             {:else}
-                                <Eye class="h-5 w-5 text-gray-400" />
+                                <EyeOff class="h-5 w-5" />
                             {/if}
                         </button>
                     </div>
@@ -365,37 +367,38 @@
                             <Lock class="h-5 w-5 text-gray-400" />
                         </div>
                         <input
-                                type={showConfirmNewPassword ? 'text' : 'password'}
-                                name="confirmNewPassword"
-                                id="confirmNewPassword"
-                                bind:value={confirmNewPassword}
-                                required
-                                minlength="6"
-                                class="focus:ring-[#8128c9] focus:border-[#8128c9] block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md py-2.5"
-                                placeholder="Confirmer le nouveau mot de passe"
+                          type={showConfirmNewPassword ? 'text' : 'password'}
+                          name="confirmNewPassword"
+                          id="confirmNewPassword"
+                          bind:value={confirmNewPassword}
+                          required
+                          minlength="6"
+                          class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md py-2.5 transition-all duration-200"
+                          placeholder="Confirmer le nouveau mot de passe"
                         />
                         <button
-                                type="button"
-                                on:click={() => showConfirmNewPassword = !showConfirmNewPassword}
-                                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                          type="button"
+                          on:click={() => showConfirmNewPassword = !showConfirmNewPassword}
+                          class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-500 hover:text-blue-600 transition-colors duration-200"
+                          aria-label={showConfirmNewPassword ? "Cacher le mot de passe" : "Afficher le mot de passe"}
                         >
                             {#if showConfirmNewPassword}
-                                <EyeOff class="h-5 w-5 text-gray-400" />
+                                <Eye class="h-5 w-5" />
                             {:else}
-                                <Eye class="h-5 w-5 text-gray-400" />
+                                <EyeOff class="h-5 w-5" />
                             {/if}
                         </button>
                     </div>
                 </div>
                 {#if passwordChangeMessage}
-                    <div class={`p-3 rounded-md text-sm flex items-center ${passwordChangeStatus === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    <div class={`p-3 rounded-md text-sm flex items-center ${passwordChangeStatus === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} shadow-md`}>
                         {#if passwordChangeStatus === 'success'} <CheckCircle class="h-5 w-5 mr-2"/> {:else} <AlertCircle class="h-5 w-5 mr-2"/> {/if}
                         {passwordChangeMessage}
                     </div>
                 {/if}
                 <button
-                        type="submit"
-                        class="w-full cursor-pointer flex items-center justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-[#8128c9] hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8128c9] transition-colors duration-300"
+                  type="submit"
+                  class="w-full cursor-pointer flex items-center justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-lg text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105"
                 >
                     Changer le Mot de Passe
                 </button>
@@ -405,8 +408,19 @@
 </div>
 
 <style>
-    header h1 {
-        animation: fadeInDown 0.8s ease-out;
+    /* Animations d'apparition */
+    .animate-fade-in-down {
+        animation: fadeInDown 0.8s ease-out forwards;
+        opacity: 0;
+    }
+
+    .animate-fade-in-down.delay-100 {
+        animation-delay: 0.1s;
+    }
+
+    .animate-fade-in-up {
+        animation: fadeInUp 0.5s ease-out forwards;
+        opacity: 0;
     }
 
     @keyframes fadeInDown {
@@ -418,11 +432,6 @@
             opacity: 1;
             transform: translateY(0);
         }
-    }
-
-    main form {
-        animation: fadeInUp 0.5s ease-out forwards;
-        opacity: 0;
     }
 
     @keyframes fadeInUp {

@@ -1,85 +1,162 @@
-<script>
-	export let pseudonyme; // Nom de l'utilisateur
-	export let date; // Date de publication
-	export let idee; // Contenu de la suggestion
-	export let upvotes = 0; // Nombre de votes positifs
-	export let downvotes = 0; // Nombre de votes négatifs
-
-	// Gestion des votes positifs
-	const handleUpvote = () => {
-		upvotes++;
-	};
-
-	// Gestion des votes négatifs
-	const handleDownvote = () => {
-		downvotes++;
+<script context="module" lang="ts">
+	export type SuggestionType = {
+		id: string;
+		title: string;
+		description: string; // Conservée pour flexibilité future
+		likes: number;
+		dislikes: number;
+		userVote?: 'LIKE' | 'DISLIKE' | null;
+		text: string;
+		authorPseudo: string;
+		createdAt: string;
 	};
 </script>
 
-<div class="bg-white rounded-xl shadow-lg p-6 mx-4 flex flex-col justify-between w-64 text-gray-900">
-	<!-- Header contenant le pseudonyme et la date -->
-	<div class="mb-4">
-		<h3 class="text-lg font-semibold text-purple-700">{pseudonyme}</h3>
-		<p class="text-sm text-gray-600">{date}</p>
-	</div>
+<script lang="ts">
+	import { ThumbsUp, ThumbsDown, User, Calendar } from 'lucide-svelte';
+	import { user, isAuthenticated } from '$lib/stores/auth';
+	import { goto } from '$app/navigation';
+	import { slide } from 'svelte/transition';
 
-	<!-- Idée -->
-	<p class="text-gray-700 mb-6">{idee}</p>
+	export let suggestion: SuggestionType;
 
-	<!-- Votes et boutons -->
-	<div class="flex items-center justify-between">
-		<div class="flex space-x-2">
-			<!-- Bouton Upvote -->
-			<button
-				on:click={handleUpvote}
-				class="flex gap-2 bg-indigo-600 text-white px-3 py-1 rounded-lg shadow hover:bg-indigo-500 transition"
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="1.5"
-					stroke="currentColor"
-					class="size-6"
+	let currentLikes = suggestion.likes;
+	let currentDislikes = suggestion.dislikes;
+	let currentUserVote = suggestion.userVote;
+	let isLoadingVote = false;
+	let voteError = ''; // Pour afficher une erreur de vote à l'utilisateur
+
+	function formatDate(dateString: string) {
+		const date = new Date(dateString);
+		return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+	}
+
+	async function handleVote(voteType: 'LIKE' | 'DISLIKE') {
+		if (!$isAuthenticated) {
+			if (confirm('Vous devez être connecté pour voter. Voulez-vous vous connecter ?')) {
+				goto(`/login?redirectTo=/suggestions`);
+			}
+			return;
+		}
+		if (isLoadingVote) return;
+
+		isLoadingVote = true;
+		voteError = ''; // Réinitialiser l'erreur de vote
+
+		const prevLikes = currentLikes;
+		const prevDislikes = currentDislikes;
+		const prevUserVote = currentUserVote;
+
+		// Optimistic update
+		if (currentUserVote === voteType) {
+			if (voteType === 'LIKE') currentLikes--;
+			else currentDislikes--;
+			currentUserVote = null;
+		} else {
+			if (voteType === 'LIKE') {
+				currentLikes++;
+				if (currentUserVote === 'DISLIKE') currentDislikes--;
+			} else {
+				currentDislikes++;
+				if (currentUserVote === 'LIKE') currentLikes--;
+			}
+			currentUserVote = voteType;
+		}
+
+		try {
+			const response = await fetch(`/api/suggestions/${suggestion.id}/vote`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ voteType })
+			});
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				voteError = data.error || 'Erreur lors du vote.';
+				console.error("Erreur de vote (API):", voteError);
+				currentLikes = prevLikes;
+				currentDislikes = prevDislikes;
+				currentUserVote = prevUserVote;
+			} else {
+				currentLikes = data.likes;
+				currentDislikes = data.dislikes;
+				// currentUserVote = data.userVote;
+			}
+		} catch (err) {
+			currentLikes = prevLikes;
+			currentDislikes = prevDislikes;
+			currentUserVote = prevUserVote;
+			if (err instanceof Error) {
+				voteError = err.message;
+			} else {
+				voteError = 'Une erreur inconnue est survenue lors du vote.';
+			}
+			console.error("Erreur de vote (Catch):", err);
+		} finally {
+			isLoadingVote = false;
+		}
+	}
+</script>
+
+<article transition:slide={{ duration: 300 }} class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl">
+	<div class="p-6 sm:p-8">
+		<header class="mb-4">
+			<h3 class="text-xl sm:text-2xl font-semibold text-gray-800 hover:text-blue-600 transition-colors">
+				{suggestion.title}
+			</h3>
+			<div class="flex items-center text-xs sm:text-sm text-gray-500 mt-2 space-x-4">
+				<span class="flex items-center">
+					<User class="h-4 w-4 mr-1.5 text-gray-400" />
+					{suggestion.authorPseudo || 'Anonyme'}
+				</span>
+				<span class="flex items-center">
+					<Calendar class="h-4 w-4 mr-1.5 text-gray-400" />
+					{formatDate(suggestion.createdAt)}
+				</span>
+			</div>
+		</header>
+
+		<p class="text-gray-700 leading-relaxed mb-6 whitespace-pre-wrap">
+			{suggestion.text}
+		</p>
+
+		{#if voteError}
+			<p class="text-red-500 text-sm mb-3 text-center">{voteError}</p>
+		{/if}
+
+		<footer class="flex items-center justify-between pt-4 border-t border-gray-200">
+			<div class="flex items-center space-x-3 sm:space-x-4">
+				<button
+					on:click={() => handleVote('LIKE')}
+					class="flex items-center space-x-1.5 text-gray-500 hover:text-green-500 focus:outline-none transition-colors p-2 rounded-md hover:bg-green-50 disabled:opacity-50"
+					title="J'aime"
+					disabled={isLoadingVote}
+					class:text-green-500={currentUserVote === 'LIKE'}
+					class:font-semibold={currentUserVote === 'LIKE'}
 				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941"
-					/>
-				</svg>
-				{upvotes} <!-- Affiche le compteur d'upvotes -->
-			</button>
+					<ThumbsUp size={20} class={currentUserVote === 'LIKE' ? 'fill-current' : ''} />
+					<span class="text-sm">{currentLikes}</span>
+				</button>
 
-			<!-- Bouton Downvote -->
-			<button
-				on:click={handleDownvote}
-				class="flex gap-2 bg-red-500 text-white px-3 py-1 rounded-lg shadow hover:bg-red-400 transition"
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="1.5"
-					stroke="currentColor"
-					class="size-6"
+				<button
+					on:click={() => handleVote('DISLIKE')}
+					class="flex items-center space-x-1.5 text-gray-500 hover:text-red-500 focus:outline-none transition-colors p-2 rounded-md hover:bg-red-50 disabled:opacity-50"
+					title="Je n'aime pas"
+					disabled={isLoadingVote}
+					class:text-red-500={currentUserVote === 'DISLIKE'}
+					class:font-semibold={currentUserVote === 'DISLIKE'}
 				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181"
-					/>
-				</svg>
-				{downvotes} <!-- Affiche le compteur de downvotes -->
-			</button>
-		</div>
-	</div>
-</div>
+					<ThumbsDown size={20} class={currentUserVote === 'DISLIKE' ? 'fill-current' : ''} />
+					<span class="text-sm">{currentDislikes}</span>
+				</button>
+			</div>
 
-<style>
-    /* Ajout d'une animation subtile au hover */
-    div:hover {
-        transform: scale(1.02);
-        transition: transform 0.3s ease;
-    }
-</style>
+			{#if $user && $user.pseudo === suggestion.authorPseudo}
+				<!-- <button class="text-sm text-blue-500 hover:underline flex items-center">
+					 Modifier
+				</button> -->
+			{/if}
+		</footer>
+	</div>
+</article>

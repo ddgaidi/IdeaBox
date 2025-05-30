@@ -28,8 +28,8 @@ export const POST: RequestHandler = async ({ request }) => {
 
   const mailOptions: nodemailer.SendMailOptions = {
     from: 'itisgame.site@gmail.com',
-    to: 'support@itisgame.fr',
-    subject: 'Email du support',
+    to: 'Support@itisgame.fr',
+    subject: 'Email du Support',
     text: emailContent,
   };
 

@@ -1,7 +1,7 @@
-<script>
-    import Navbar from '../lib/components/navbar/Navbar.svelte';
-    import Accueil from '../lib/components/accueil/Accueil.svelte';
-    import Footer from "../lib/components/footer/Footer.svelte";
+<script lang="ts">
+    import Navbar from '../lib/components/Navbar/Navbar.svelte';
+    import Accueil from '../lib/components/Accueil/Accueil.svelte';
+    import Footer from '../lib/components/Footer/Footer.svelte';
 
     import '../app.css';
 </script>

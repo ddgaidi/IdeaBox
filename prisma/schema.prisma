@@ -11,10 +11,45 @@ generator client {
 }
 
 model User {
+  id          String       @id @default(uuid())
+  pseudo      String       @unique
+  email       String       @unique
+  password    String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  suggestions Suggestion[]
+  votes       Vote[]
+}
+
+model Suggestion {
   id        String   @id @default(uuid())
-  pseudo    String   @unique
-  email     String   @unique
-  password  String
+  title     String
+  text      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  likes     Int      @default(0)
+  dislikes  Int      @default(0)
+  votes     Vote[]
+
+  @@index([authorId])
+}
+
+model Vote {
+  userId       String
+  suggestionId String
+  type         VoteType // 'LIKE' ou 'DISLIKE'
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  suggestion Suggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+
+  @@id([userId, suggestionId]) // Clé primaire composite
+  @@index([userId])
+  @@index([suggestionId])
+}
+
+enum VoteType {
+  LIKE
+  DISLIKE
 }

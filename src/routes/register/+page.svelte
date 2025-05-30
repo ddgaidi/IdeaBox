@@ -7,13 +7,13 @@
 </script>
 
 <svelte:head>
-    <title>Inscription - ItisGame</title>
+    <title>Inscription - IdeaBox</title>
     <meta name="description" content="Bienvenue sur ItisGame, votre destination ultime pour des jeux d'arcade en ligne passionnants et un divertissement sans fin. Plongez dans l'action !" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#8128c9" />
 
     <!-- Open Graph (Facebook, Discord, etc.) -->
-    <meta property="og:title" content="ItisGame - Inscription" />
+    <meta property="og:title" content="IdeaBox - Inscription" />
     <meta property="og:description" content="Bienvenue sur ItisGame, votre destination ultime pour des jeux d'arcade en ligne passionnants et un divertissement sans fin. Plongez dans l'action !" />
     <meta property="og:image" content="https://i.ibb.co/Whr94Mp/banner.jpg" />
     <meta property="og:type" content="website" />
@@ -21,7 +21,7 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="ItisGame - Inscription" />
+    <meta name="twitter:title" content="IdeaBox - Inscription" />
     <meta name="twitter:description" content="Bienvenue sur ItisGame, votre destination ultime pour des jeux d'arcade en ligne passionnants et un divertissement sans fin. Plongez dans l'action !" />
     <meta name="twitter:image" content="https://i.ibb.co/Whr94Mp/banner.jpg" />
 
