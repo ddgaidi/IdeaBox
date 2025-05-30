@@ -3,7 +3,6 @@
 	import SuggestionCard from '$lib/components/Suggestion/Suggestion.svelte';
 	import type { SuggestionType } from '$lib/components/Suggestion/Suggestion.svelte';
 
-	// Données pour les fonctionnalités (inchangées)
 	const features = [
 		{
 			icon: Lightbulb,
@@ -25,7 +24,6 @@
 		}
 	];
 
-	// Fausses suggestions pour l'animation (inchangées)
 	const fakeSuggestions: SuggestionType[] = [
 		{
 			id: 'fake1',
@@ -95,9 +93,6 @@
 		},
 	];
 
-	// Pour un défilement vraiment infini, nous avons besoin de deux copies des suggestions.
-	// L'animation déplacera tout le conteneur de la largeur d'UNE copie.
-	// Donc, le conteneur interne doit avoir une largeur de 200% par rapport à la largeur des suggestions visibles.
 	const marqueeSuggestions = [...fakeSuggestions, ...fakeSuggestions.map(s => ({ ...s, id: `${s.id}-clone` }))];
 
 </script>
@@ -106,15 +101,13 @@
     .marquee-container {
         overflow: hidden;
         width: 100%;
-        display: flex; /* Important pour que l'animation de défilement fonctionne correctement */
+        display: flex;
     }
 
     .marquee-content {
-        display: flex; /* Aligne les cartes horizontalement */
-        flex-shrink: 0; /* Empêche le rétrécissement du contenu */
-        /* La largeur totale sera la somme des largeurs des enfants.
-					 L'animation déplacera ce conteneur. */
-        animation: marquee-scroll 20s linear infinite; /* Ajustez la durée pour la vitesse */
+        display: flex;
+        flex-shrink: 0;
+        animation: marquee-scroll 20s linear infinite;
     }
 
     @keyframes marquee-scroll {
@@ -122,35 +115,25 @@
             transform: translateX(0%);
         }
         100% {
-            transform: translateX(-50%); /* Défile de la largeur du premier ensemble de suggestions */
+            transform: translateX(-50%);
         }
     }
 
     .marquee-item {
-        flex: 0 0 auto; /* Empêche le rétrécissement/agrandissement des cartes */
-        width: 320px;   /* Largeur fixe pour chaque carte */
-        margin-right: 1.5rem; /* Espace entre les cartes (équivalent à mr-6 de Tailwind) */
-        /* Pour désactiver les clics sur les boutons de vote DANS les cartes de ce marquee */
+        flex: 0 0 auto;
+        width: 320px;
+        margin-right: 1.5rem;
     }
-    .marquee-item :global(article footer button) { /* Cible les boutons de vote dans les SuggestionCard */
-        pointer-events: none !important; /* Désactive les clics et autres événements pointeur */
-        cursor: default !important; /* Change le curseur pour indiquer la non-interactivité */
+    .marquee-item :global(article footer button) {
+        pointer-events: none !important;
+        cursor: default !important;
     }
 
-
-    @media (min-width: 768px) { /* md breakpoint */
+    @media (min-width: 768px) {
         .marquee-item {
-            width: 384px; /* w-96 de Tailwind */
+            width: 384px;
         }
     }
-
-    /* Optionnel: pour rendre la carte entière non cliquable dans le marquee */
-    /*
-		.marquee-item :global(article) {
-			pointer-events: none;
-			cursor: default;
-		}
-		*/
 </style>
 
 <section class="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white py-20 sm:py-32 px-6 md:px-12 text-center">
@@ -192,42 +175,41 @@
 	</div>
 </section>
 
-<!-- Section des fausses suggestions animées -->
 <section class="py-16 sm:py-24 bg-white">
 	<div class="max-w-full mx-auto">
 		<div class="flex flex-col sm:flex-row justify-between items-center mb-12 px-6 md:px-32">
-		<h2 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-0">
-		Quelques Idées Inspirantes...
-		</h2>
-		<a href="/suggestions" class="text-indigo-600 hover:text-indigo-800 font-semibold group flex items-center shrink-0">
-		Voir toutes les suggestions
-		<ArrowRight class="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-150" />
-		</a>
+			<h2 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-0">
+				Quelques Idées Inspirantes...
+			</h2>
+			<a href="/suggestions" class="text-indigo-600 hover:text-indigo-800 font-semibold group flex items-center shrink-0">
+				Voir toutes les suggestions
+				<ArrowRight class="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-150" />
+			</a>
 		</div>
 
 		<div class="marquee-container py-4">
-		<div class="marquee-content">
-		{#each marqueeSuggestions as suggestion (suggestion.id)}
-		<div class="marquee-item">
-		<SuggestionCard {suggestion} />
+			<div class="marquee-content">
+				{#each marqueeSuggestions as suggestion (suggestion.id)}
+					<div class="marquee-item">
+						<SuggestionCard {suggestion} />
+					</div>
+				{/each}
+			</div>
 		</div>
-		{/each}
-		</div>
-		</div>
-		</div>
-		</section>
+	</div>
+</section>
 
-		<section class="py-16 sm:py-24 bg-gray-50">
-		<div class="max-w-4xl mx-auto px-6 md:px-12 text-center">
+<section class="py-16 sm:py-24 bg-gray-50">
+	<div class="max-w-4xl mx-auto px-6 md:px-12 text-center">
 		<UserPlus class="h-16 w-16 text-indigo-500 mx-auto mb-6" />
 		<h2 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-6">
-		Prêt à faire entendre votre voix ?
+			Prêt à faire entendre votre voix ?
 		</h2>
 		<p class="text-lg text-gray-600 mb-10 max-w-xl mx-auto">
-		Rejoignez notre communauté dès aujourd'hui pour commencer à proposer vos idées, voter et participer aux discussions.
+			Rejoignez notre communauté dès aujourd'hui pour commencer à proposer vos idées, voter et participer aux discussions.
 		</p>
-		<a href="/register" class="bg-indigo-600 text-white font-semibold px-10 py-4 rounded-lg shadow-lg hover:bg-indigo-700 transition-colors duration-150 ease-in-out text-lg">
-		S'inscrire Maintenant
+		<a href="/register" class="inline-block bg-indigo-600 transition-all duration-300 transform hover:scale-105 text-white font-semibold px-10 py-4 rounded-lg shadow-lg hover:bg-indigo-700 ease-in-out text-lg">
+			S'inscrire Maintenant
 		</a>
-		</div>
-		</section>
+	</div>
+</section>

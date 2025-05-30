@@ -1,30 +1,65 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { MessageSquare, AlertTriangle, Loader2 } from 'lucide-svelte';
+	import { MessageSquare, AlertTriangle, Loader2, UserLock } from 'lucide-svelte'; // Ajout de UserLock
 	import SuggestionCard from '$lib/components/Suggestion/Suggestion.svelte';
 	import type { SuggestionType } from '$lib/components/Suggestion/Suggestion.svelte';
+	import { isAuthenticated } from '$lib/stores/auth'; // Import du store d'authentification
+	import { goto } from '$app/navigation'; // Import pour la redirection
 
 	let suggestions: SuggestionType[] = [];
 	let isLoading = true;
 	let errorMessage = '';
+	let showLoginPrompt = false; // État pour afficher l'invite de connexion
 
 	onMount(async () => {
+		// Vérifier l'authentification avant de fetcher
+		if (!$isAuthenticated) {
+			showLoginPrompt = true;
+			isLoading = false; // Arrêter le chargement car nous n'allons pas fetcher
+			return;
+		}
 		await fetchSuggestions();
 	});
 
 	async function fetchSuggestions() {
+		// Si l'utilisateur n'est pas authentifié (vérification supplémentaire au cas où)
+		if (!$isAuthenticated) {
+			showLoginPrompt = true;
+			isLoading = false;
+			return;
+		}
+
 		isLoading = true;
 		errorMessage = '';
+		showLoginPrompt = false; // S'assurer que l'invite de connexion est cachée si on re-fetch après connexion
+
 		try {
 			const response = await fetch('/api/suggestions');
+
+			// Si la réponse n'est pas OK, et que c'est un statut qui pourrait indiquer une redirection (ex: 401 Unauthorized)
+			// cela peut aussi être géré ici, mais l'API devrait idéalement retourner un JSON d'erreur clair.
 			if (!response.ok) {
-				const errorData = await response.json();
-				throw new Error(errorData.error || 'Impossible de charger les suggestions.');
+				// Tentative de lecture du message d'erreur JSON, sinon erreur générique
+				try {
+					const errorData = await response.json();
+					throw new Error(errorData.error || `Erreur ${response.status}: Impossible de charger les suggestions.`);
+				} catch (jsonParseError) {
+					// Si la réponse n'est pas du JSON (par exemple, une page HTML de redirection)
+					if (response.status === 401 || response.status === 403) {
+						showLoginPrompt = true;
+						isLoading = false;
+						return; // Ne pas continuer si c'est un problème d'auth
+					}
+					throw new Error(`Erreur ${response.status}: Le serveur a renvoyé une réponse inattendue.`);
+				}
 			}
 			const data: SuggestionType[] = await response.json();
 			suggestions = data.map(s => ({ ...s, userVote: s.userVote || undefined }));
 		} catch (err) {
 			if (err instanceof Error) {
+				// Si l'erreur est spécifiquement parce que l'utilisateur doit se connecter (détecté par le message ou statut)
+				// on pourrait vouloir afficher le showLoginPrompt ici aussi.
+				// Pour l'instant, on affiche le message d'erreur général.
 				errorMessage = err.message;
 			} else {
 				errorMessage = 'Une erreur inconnue est survenue.';
@@ -49,6 +84,20 @@
 				<Loader2 class="h-12 w-12 text-blue-500 animate-spin mb-4" />
 				<p class="text-lg text-gray-500">Chargement des suggestions...</p>
 			</div>
+		{:else if showLoginPrompt}
+			<div class="text-center p-8 bg-white rounded-xl shadow-xl my-10">
+				<UserLock class="h-16 w-16 text-blue-500 mx-auto mb-6" />
+				<h2 class="text-2xl font-semibold text-gray-700 mb-3">Accès Réservé</h2>
+				<p class="text-gray-600 mb-8">
+					Vous devez être connecté pour consulter les suggestions.
+				</p>
+				<button
+					on:click={() => goto('/login?redirectTo=/suggestions')}
+					class="bg-blue-500 cursor-pointer transition-all duration-300 transform hover:scale-105 text-white font-semibold px-8 py-3 rounded-lg shadow-md hover:bg-blue-600 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+				>
+					Se connecter
+				</button>
+			</div>
 		{:else if errorMessage}
 			<div
 				class="bg-red-50 border-l-4 border-red-400 text-red-700 p-6 rounded-md shadow-md relative text-left"
@@ -59,10 +108,17 @@
 					<div>
 						<p class="font-bold mb-1">Erreur lors du chargement</p>
 						<p class="text-sm"> {errorMessage}</p>
-						<button
-							class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors duration-150"
-							on:click={fetchSuggestions}>Réessayer</button
-						>
+						{#if $isAuthenticated}
+							<button
+								class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors duration-150"
+								on:click={fetchSuggestions}>Réessayer
+							</button>
+						{:else}
+							<button
+								class="mt-4 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors duration-150"
+								on:click={() => goto('/login?redirectTo=/suggestions')}>Se connecter pour réessayer
+							</button>
+						{/if}
 					</div>
 				</div>
 			</div>

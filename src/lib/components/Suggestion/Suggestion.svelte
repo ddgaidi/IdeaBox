@@ -127,7 +127,7 @@
 			<div class="flex items-center space-x-3 sm:space-x-4">
 				<button
 					on:click={() => handleVote('LIKE')}
-					class="flex items-center space-x-1.5 text-gray-500 hover:text-green-500 focus:outline-none transition-colors p-2 rounded-md hover:bg-green-50 disabled:opacity-50"
+					class="flex items-center space-x-1.5 cursor-pointer text-gray-500 hover:text-green-500 focus:outline-none transition-colors p-2 rounded-md hover:bg-green-50 disabled:opacity-50"
 					title="J'aime"
 					disabled={isLoadingVote}
 					class:text-green-500={currentUserVote === 'LIKE'}
@@ -139,7 +139,7 @@
 
 				<button
 					on:click={() => handleVote('DISLIKE')}
-					class="flex items-center space-x-1.5 text-gray-500 hover:text-red-500 focus:outline-none transition-colors p-2 rounded-md hover:bg-red-50 disabled:opacity-50"
+					class="flex items-center space-x-1.5 cursor-pointer text-gray-500 hover:text-red-500 focus:outline-none transition-colors p-2 rounded-md hover:bg-red-50 disabled:opacity-50"
 					title="Je n'aime pas"
 					disabled={isLoadingVote}
 					class:text-red-500={currentUserVote === 'DISLIKE'}

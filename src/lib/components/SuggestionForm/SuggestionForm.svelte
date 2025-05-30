@@ -128,7 +128,7 @@
 				<button
 					type="submit"
 					disabled={isSubmitting}
-					class="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-150 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
+					class="w-full flex cursor-pointer items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-150 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
 				>
 					<Send class="mr-2 h-5 w-5" />
 					{isSubmitting ? 'Envoi en cours...' : 'Poster la suggestion'}
