@@ -17,8 +17,8 @@
 		},
 		{
 			icon: MessageSquare,
-			title: 'Votez & Commentez',
-			description: 'Donnez votre avis sur les propositions des autres et participez à la discussion.',
+			title: 'Votez',
+			description: 'Donnez votre avis sur les propositions des autres en votant pour ou contre.',
 			color: 'text-blue-500'
 		},
 		{
