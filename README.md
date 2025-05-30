@@ -9,8 +9,8 @@
 - 🔐 **Connexion / Inscription** des utilisateurs
 - 🧠 **Ajout d'idées** par tous les membres connectés
 - 👍👎 **Votes pour et contre** sur chaque suggestion
-- 🕒 **Mise à jour en temps réel** via WebSocket (Socket.IO)
-- 🔍 **Filtrage dynamique** par popularité ou date *(fonctionnalité bonus)*
+- 🕒 **Mise à jour en temps réel** des votes
+- 🔍 **Support** en cas de problème ou de question
 
 ---
 
