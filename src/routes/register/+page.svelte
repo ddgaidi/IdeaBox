@@ -1,7 +1,7 @@
 <script>
-    import Navbar from '../../lib/components/navbar/Navbar.svelte';
-    import Register from '../../lib/components/register/Register.svelte';
-    import Footer from '../../lib/components/footer/Footer.svelte';
+    import Navbar from '$lib/components/Navbar/Navbar.svelte';
+    import Register from '$lib/components/Register/Register.svelte';
+    import Footer from '$lib/components/Footer/Footer.svelte';
 
     import '../../app.css';
 </script>

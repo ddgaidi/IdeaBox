@@ -1,7 +1,7 @@
 <script>
-    import Navbar from '../../lib/components/navbar/Navbar.svelte';
-    import Login from '../../lib/components/login/Login.svelte';
-    import Footer from '../../lib/components/footer/Footer.svelte';
+    import Navbar from '$lib/components/Navbar/Navbar.svelte';
+    import Login from '$lib/components/Login/Login.svelte';
+    import Footer from '$lib/components/Footer/Footer.svelte';
 
     import '../../app.css';
 </script>
