@@ -162,16 +162,18 @@
             transform: translateX(0%);
         }
         to {
-            transform: translateX(-50%); /* Défile la moitié des éléments pour un loop parfait */
+            /* Avec 3 copies du contenu, pour faire défiler les 2 premières copies : */
+            transform: translateX(calc(-100% / 3 * 2));
         }
     }
 
     .animate-scroll-x {
         animation: scroll-x 40s linear infinite; /* 40s pour la durée, ajustez selon la vitesse désirée */
-        /* Pour que l'animation se mette en pause au survol */
-        &:hover {
-            animation-play-state: paused;
-        }
+    }
+
+    /* Pour que l'animation se mette en pause au survol (syntaxe CSS standard) */
+    .animate-scroll-x:hover {
+        animation-play-state: paused;
     }
 
     /* Styles pour la police Inter si non définie globalement */
