@@ -43,7 +43,7 @@
 
             // Redirection après un court délai pour que l'utilisateur voie le message de succès
             setTimeout(() => {
-                goto('/accueil');
+                goto('/');
             }, 1500); // Redirige après 1.5 secondes
 
         } catch (error: unknown) {
@@ -78,7 +78,7 @@
                     <p class="font-bold text-lg">Connexion Réussie !</p>
                     <p>{submissionMessage}</p>
                     <a
-                      href="/accueil"
+                      href="/"
                       class="mt-4 inline-block bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-md"
                     >
                         Accéder à l'application

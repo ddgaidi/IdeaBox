@@ -36,10 +36,6 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Suggestions de la Communauté</title>
-</svelte:head>
-
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 text-gray-800 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
 	<div class="max-w-3xl mx-auto">
 		<header class="mb-10 text-center">
