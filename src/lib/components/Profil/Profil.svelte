@@ -1,163 +1,438 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
+    import { User, Mail, Lock, Pencil, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-svelte';
+    import { user } from '$lib/stores/auth';
 
-	// Éléments du profil utilisateur
-	let pseudonyme: string = '';
-	let email: string = '';
-	let newPassword: string = '';
+    let currentUser = {
+        pseudo: '',
+        email: ''
+    };
 
-	// Classe appliquée dynamiquement pour l'animation
-	let fadeInClass = 'opacity-0 translate-y-4';
+    // Mettre à jour currentUser quand $user change
+    $: if ($user) {
+        currentUser = {
+            pseudo: $user.pseudo,
+            email: $user.email
+        };
+    }
 
-	// Gestion de l'animation à l'affichage
-	onMount(async () => {
-		try {
-			// Ajout de l'animation
-			setTimeout(() => {
-				fadeInClass = 'opacity-100 translate-y-0';
-			}, 100);
+    // Initialiser newPseudo avec une valeur réactive
+    $: newPseudo = currentUser.pseudo;
 
-			// Récupération des données utilisateur
-			const token = localStorage.getItem('jwt'); // Récupère le token
-			if (!token) {
-				alert('Vous n’êtes pas connecté.');
-				goto('/login'); // Redirection vers la page de connexion si pas de token
-				return;
-			}
+    let pseudoChangeStatus: 'idle' | 'success' | 'error' = 'idle';
+    let pseudoChangeMessage = '';
 
-			const response = await fetch('http://localhost:3000/profil', {
-				headers: {
-					Authorization: `Bearer ${token}`, // Transmettre le token au backend
-				},
-			});
+    let newEmail = '';
 
-			if (!response.ok) {
-				alert('Impossible de récupérer vos informations utilisateur.');
-				goto('/login'); // Redirection en cas de problème
-				return;
-			}
+    let currentPasswordForEmail = '';
+    let emailChangeStatus: 'idle' | 'success' | 'error' = 'idle';
+    let emailChangeMessage = '';
 
-			const data = await response.json();
-			pseudonyme = data.pseudonyme;
-			email = data.email;
-		} catch (err) {
-			console.error('Erreur lors de la récupération du profil :', err);
-			alert('Une erreur est survenue. Veuillez réessayer plus tard.');
-		}
-	});
+    async function handleChangePseudo() {
+        pseudoChangeStatus = 'idle';
+        pseudoChangeMessage = '';
+        if (newPseudo.trim() === '') {
+            pseudoChangeMessage = 'Le nouveau pseudo ne peut pas être vide.';
+            pseudoChangeStatus = 'error';
+            return;
+        }
+        if (newPseudo.trim() === currentUser.pseudo) {
+            pseudoChangeMessage = 'Le nouveau pseudo est identique à l\'ancien.';
+            pseudoChangeStatus = 'error';
+            return;
+        }
 
-	// Sauvegarde des modifications du profil
-	const saveChanges = async () => {
-		try {
-			const token = localStorage.getItem('jwt');
-			if (!token) {
-				alert('Vous n’êtes pas connecté.');
-				goto('/login');
-				return;
-			}
+        try {
+            const response = await fetch('/api/user/update-pseudo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ newPseudo })
+            });
 
-			const response = await fetch('http://localhost:3000/update-profil', {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`,
-				},
-				body: JSON.stringify({
-					pseudonyme,
-					email,
-					password: newPassword || undefined, // Met à jour uniquement si un nouveau mot de passe est fourni
-				}),
-			});
+            const data = await response.json();
 
-			if (!response.ok) {
-				const error = await response.text();
-				alert(`Erreur : ${error}`);
-				return;
-			}
+            if (!response.ok) {
+                pseudoChangeMessage = data.error;
+                pseudoChangeStatus = 'error';
+                return;
+            }
 
-			alert('Votre profil a été mis à jour avec succès.');
-			newPassword = ''; // Réinitialise le champ du mot de passe
-		} catch (err) {
-			console.error('Erreur lors de la mise à jour du profil :', err);
-			alert('Une erreur est survenue. Veuillez réessayer plus tard.');
-		}
-	};
+            user.update(u => u ? { ...u, pseudo: newPseudo } : u);
+            currentUser.pseudo = newPseudo;
+            pseudoChangeMessage = 'Votre pseudo a été mis à jour avec succès !';
+            pseudoChangeStatus = 'success';
+        } catch (error) {
+            pseudoChangeMessage = 'Une erreur est survenue lors de la mise à jour du pseudo.';
+            pseudoChangeStatus = 'error';
+        }
+    }
 
-	// Déconnexion de l'utilisateur
-	const logout = () => {
-		localStorage.removeItem('jwt');
-		alert('Vous avez été déconnecté.');
-		goto('/login'); // Redirection vers la page de connexion
-	};
+    async function handleChangeEmail() {
+        emailChangeStatus = 'idle';
+        emailChangeMessage = '';
+        if (!newEmail.includes('@') || newEmail.trim() === '') {
+            emailChangeMessage = 'Veuillez entrer une adresse e-mail valide.';
+            emailChangeStatus = 'error';
+            return;
+        }
+        if (newEmail.trim() === currentUser.email) {
+            emailChangeMessage = 'La nouvelle adresse e-mail est identique à l\'ancienne.';
+            emailChangeStatus = 'error';
+            return;
+        }
+        if (currentPasswordForEmail === '') {
+            emailChangeMessage = 'Veuillez entrer votre mot de passe actuel pour confirmer.';
+            emailChangeStatus = 'error';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/user/update-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    newEmail,
+                    currentPassword: currentPasswordForEmail
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                emailChangeMessage = data.error;
+                emailChangeStatus = 'error';
+                return;
+            }
+
+            user.update(u => u ? { ...u, email: newEmail } : u);
+            currentUser.email = newEmail;
+            emailChangeMessage = 'Votre adresse e-mail a été mise à jour avec succès !';
+            emailChangeStatus = 'success';
+            newEmail = '';
+            currentPasswordForEmail = '';
+        } catch (error) {
+            emailChangeMessage = 'Une erreur est survenue lors de la mise à jour de l\'email.';
+            emailChangeStatus = 'error';
+        }
+    }
+
+    let currentPassword = '';
+    let newPassword = '';
+    let confirmNewPassword = '';
+    let passwordChangeStatus: 'idle' | 'success' | 'error' = 'idle';
+    let passwordChangeMessage = '';
+    let showCurrentPassword = false;
+    let showNewPassword = false;
+    let showConfirmNewPassword = false;
+
+    async function handleChangePassword() {
+        passwordChangeStatus = 'idle';
+        passwordChangeMessage = '';
+
+        if (newPassword.length < 6) {
+            passwordChangeMessage = 'Le nouveau mot de passe doit contenir au moins 6 caractères.';
+            passwordChangeStatus = 'error';
+            return;
+        }
+        if (newPassword !== confirmNewPassword) {
+            passwordChangeMessage = 'Les nouveaux mots de passe ne correspondent pas.';
+            passwordChangeStatus = 'error';
+            return;
+        }
+        if (currentPassword === '') {
+            passwordChangeMessage = 'Veuillez entrer votre mot de passe actuel.';
+            passwordChangeStatus = 'error';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/user/update-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    currentPassword,
+                    newPassword
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                passwordChangeMessage = data.error;
+                passwordChangeStatus = 'error';
+                return;
+            }
+
+            passwordChangeMessage = 'Votre mot de passe a été mis à jour avec succès !';
+            passwordChangeStatus = 'success';
+            currentPassword = '';
+            newPassword = '';
+            confirmNewPassword = '';
+        } catch (error) {
+            passwordChangeMessage = 'Une erreur est survenue lors de la mise à jour du mot de passe.';
+            passwordChangeStatus = 'error';
+        }
+    }
 </script>
 
-<section class="relative text-white pt-10 min-h-screen flex items-center px-6 md:px-12">
-	<div
-		class={`container mx-auto max-w-4xl bg-white rounded-lg p-8 text-gray-900 drop-shadow-xl transition-all transform duration-700 ${fadeInClass}`}
-	>
-		<!-- Titre -->
-		<h1 class="text-4xl font-extrabold text-center text-purple-700 mb-6">
-			Mon <span class="text-indigo-600">Profil</span>
-		</h1>
-		<p class="text-lg text-center text-gray-700 mb-8">
-			Gérez vos informations personnelles et mettez à jour votre compte.
-		</p>
+<div class="bg-white min-h-screen max-md:pt-32 p-4 sm:p-8 font-sans">
+    <header class="mb-12 text-center">
+        <h1 class="text-5xl font-bold text-[#8128c9]">
+            Itis<span class="text-gray-800">Game</span>
+        </h1>
+        <p class="text-xl text-gray-600 mt-2">Gérez les informations de votre compte.</p>
+    </header>
 
-		<!-- Formulaire pour modifier les informations -->
-		<div class="space-y-6">
-			<!-- Pseudonyme -->
-			<div class="flex flex-col">
-				<label for="pseudonyme" class="block text-gray-700 font-medium">Pseudonyme</label>
-				<input
-					id="pseudonyme"
-					type="text"
-					bind:value={pseudonyme}
-					class="w-full mt-1 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-300"
-				/>
-			</div>
+    <main class="max-w-2xl px-4 mx-auto space-y-12">
+        <h2 class="text-3xl font-semibold text-gray-800 mb-8 text-center">Mon Profil</h2>
 
-			<!-- Email -->
-			<div class="flex flex-col">
-				<label for="email" class="block text-gray-700 font-medium">Email</label>
-				<input
-					id="email"
-					type="email"
-					bind:value={email}
-					class="w-full mt-1 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-300"
-				/>
-			</div>
+        <section class="bg-gray-50 p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
+            <h3 class="text-2xl font-semibold text-gray-700 mb-6 flex items-center">
+                <User class="h-6 w-6 mr-3 text-[#8128c9]" />
+                Changer de Pseudonyme
+            </h3>
+            <form on:submit|preventDefault={handleChangePseudo} class="space-y-4">
+                <div>
+                    <label for="currentPseudo" class="block text-sm font-medium text-gray-500">Pseudo actuel :</label>
+                    <p class="text-lg font-semibold text-gray-800 mt-1">{currentUser.pseudo}</p>
+                </div>
+                <div>
+                    <label for="newPseudo" class="block text-sm font-medium text-gray-700 mb-1">Nouveau pseudonyme</label>
+                    <div class="relative rounded-md shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
+                            <Pencil class="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                                type="text"
+                                name="newPseudo"
+                                id="newPseudo"
+                                bind:value={newPseudo}
+                                required
+                                minlength="3"
+                                class="focus:ring-[#8128c9] focus:border-[#8128c9] block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2.5"
+                                placeholder="Nouveau pseudo"
+                        />
+                    </div>
+                </div>
+                {#if pseudoChangeMessage}
+                    <div class={`p-3 rounded-md text-sm flex items-center ${pseudoChangeStatus === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        {#if pseudoChangeStatus === 'success'} <CheckCircle class="h-5 w-5 mr-2"/> {:else} <AlertCircle class="h-5 w-5 mr-2"/> {/if}
+                        {pseudoChangeMessage}
+                    </div>
+                {/if}
+                <button
+                        type="submit"
+                        class="w-full cursor-pointer flex items-center justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-[#8128c9] hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8128c9] transition-colors duration-300"
+                >
+                    Sauvegarder le Pseudo
+                </button>
+            </form>
+        </section>
 
-			<!-- Nouveau mot de passe -->
-			<div class="flex flex-col">
-				<label for="password" class="block text-gray-700 font-medium">Nouveau mot de passe</label>
-				<input
-					id="password"
-					type="password"
-					bind:value={newPassword}
-					placeholder="Laissez vide pour ne pas modifier"
-					class="w-full mt-1 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-300"
-				/>
-			</div>
+        <section class="bg-gray-50 p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
+            <h3 class="text-2xl font-semibold text-gray-700 mb-6 flex items-center">
+                <Mail class="h-6 w-6 mr-3 text-[#8128c9]" />
+                Changer d'Adresse E-mail
+            </h3>
+            <form on:submit|preventDefault={handleChangeEmail} class="space-y-4">
+                <div>
+                    <label for="currentEmail" class="block text-sm font-medium text-gray-500">E-mail actuel :</label>
+                    <p class="text-lg font-semibold text-gray-800 mt-1">{currentUser.email}</p>
+                </div>
+                <div>
+                    <label for="newEmail" class="block text-sm font-medium text-gray-700 mb-1">Nouvelle adresse e-mail</label>
+                    <div class="relative rounded-md shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
+                            <Pencil class="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                                type="email"
+                                name="newEmail"
+                                id="newEmail"
+                                bind:value={newEmail}
+                                required
+                                class="focus:ring-[#8128c9] focus:border-[#8128c9] block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2.5"
+                                placeholder="nouvel.email@example.com"
+                        />
+                    </div>
+                </div>
+                <div>
+                    <label for="currentPasswordForEmail" class="block text-sm font-medium text-gray-700 mb-1">
+                        Mot de passe actuel (pour confirmation)
+                    </label>
+                    <div class="relative rounded-md shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
+                            <Lock class="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                                type="password"
+                                name="currentPasswordForEmail"
+                                id="currentPasswordForEmail"
+                                bind:value={currentPasswordForEmail}
+                                required
+                                class="focus:ring-[#8128c9] focus:border-[#8128c9] block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2.5"
+                                placeholder="Votre mot de passe actuel"
+                        />
+                    </div>
+                </div>
+                {#if emailChangeMessage}
+                    <div class={`p-3 rounded-md text-sm flex items-center ${emailChangeStatus === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        {#if emailChangeStatus === 'success'} <CheckCircle class="h-5 w-5 mr-2"/> {:else} <AlertCircle class="h-5 w-5 mr-2"/> {/if}
+                        {emailChangeMessage}
+                    </div>
+                {/if}
+                <button
+                        type="submit"
+                        class="w-full cursor-pointer flex items-center justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-[#8128c9] hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8128c9] transition-colors duration-300"
+                >
+                    Sauvegarder l'Email
+                </button>
+            </form>
+        </section>
 
-			<!-- Boutons -->
-			<div class="mt-6 flex justify-between">
-				<!-- Enregistrer les modifications -->
-				<button
-					on:click={saveChanges}
-					class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-500 transition"
-				>
-					Enregistrer les modifications
-				</button>
+        <section class="bg-gray-50 p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
+            <h3 class="text-2xl font-semibold text-gray-700 mb-6 flex items-center">
+                <Lock class="h-6 w-6 mr-3 text-[#8128c9]" />
+                Changer de Mot de Passe
+            </h3>
+            <form on:submit|preventDefault={handleChangePassword} class="space-y-4">
+                <div>
+                    <label for="currentPassword" class="block text-sm font-medium text-gray-700 mb-1">
+                        Mot de passe actuel
+                    </label>
+                    <div class="relative rounded-md shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
+                            <Lock class="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                                type={showCurrentPassword ? 'text' : 'password'}
+                                name="currentPassword"
+                                id="currentPassword"
+                                bind:value={currentPassword}
+                                required
+                                class="focus:ring-[#8128c9] focus:border-[#8128c9] block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md py-2.5"
+                                placeholder="Votre mot de passe actuel"
+                        />
+                        <button
+                                type="button"
+                                on:click={() => showCurrentPassword = !showCurrentPassword}
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                        >
+                            {#if showCurrentPassword}
+                                <EyeOff class="h-5 w-5 text-gray-400" />
+                            {:else}
+                                <Eye class="h-5 w-5 text-gray-400" />
+                            {/if}
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label for="newPassword" class="block text-sm font-medium text-gray-700 mb-1">
+                        Nouveau mot de passe
+                    </label>
+                    <div class="relative rounded-md shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
+                            <Lock class="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                                type={showNewPassword ? 'text' : 'password'}
+                                name="newPassword"
+                                id="newPassword"
+                                bind:value={newPassword}
+                                required
+                                minlength="6"
+                                class="focus:ring-[#8128c9] focus:border-[#8128c9] block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md py-2.5"
+                                placeholder="Nouveau mot de passe"
+                        />
+                        <button
+                                type="button"
+                                on:click={() => showNewPassword = !showNewPassword}
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                        >
+                            {#if showNewPassword}
+                                <EyeOff class="h-5 w-5 text-gray-400" />
+                            {:else}
+                                <Eye class="h-5 w-5 text-gray-400" />
+                            {/if}
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label for="confirmNewPassword" class="block text-sm font-medium text-gray-700 mb-1">
+                        Confirmer le nouveau mot de passe
+                    </label>
+                    <div class="relative rounded-md shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
+                            <Lock class="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                                type={showConfirmNewPassword ? 'text' : 'password'}
+                                name="confirmNewPassword"
+                                id="confirmNewPassword"
+                                bind:value={confirmNewPassword}
+                                required
+                                minlength="6"
+                                class="focus:ring-[#8128c9] focus:border-[#8128c9] block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md py-2.5"
+                                placeholder="Confirmer le nouveau mot de passe"
+                        />
+                        <button
+                                type="button"
+                                on:click={() => showConfirmNewPassword = !showConfirmNewPassword}
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                        >
+                            {#if showConfirmNewPassword}
+                                <EyeOff class="h-5 w-5 text-gray-400" />
+                            {:else}
+                                <Eye class="h-5 w-5 text-gray-400" />
+                            {/if}
+                        </button>
+                    </div>
+                </div>
+                {#if passwordChangeMessage}
+                    <div class={`p-3 rounded-md text-sm flex items-center ${passwordChangeStatus === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        {#if passwordChangeStatus === 'success'} <CheckCircle class="h-5 w-5 mr-2"/> {:else} <AlertCircle class="h-5 w-5 mr-2"/> {/if}
+                        {passwordChangeMessage}
+                    </div>
+                {/if}
+                <button
+                        type="submit"
+                        class="w-full cursor-pointer flex items-center justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-[#8128c9] hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8128c9] transition-colors duration-300"
+                >
+                    Changer le Mot de Passe
+                </button>
+            </form>
+        </section>
+    </main>
+</div>
 
-				<!-- Déconnexion -->
-				<button
-					on:click={logout}
-					class="bg-red-600 text-white px-6 py-2 rounded-lg shadow hover:bg-red-500 transition"
-				>
-					Déconnexion
-				</button>
-			</div>
-		</div>
-	</div>
-</section>
+<style>
+    header h1 {
+        animation: fadeInDown 0.8s ease-out;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    main form {
+        animation: fadeInUp 0.5s ease-out forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>

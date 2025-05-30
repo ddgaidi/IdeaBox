@@ -1,72 +1,108 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
+    import { Home, Lightbulb, PlusCircle, LifeBuoy, UserPlus, Menu, X } from 'lucide-svelte'; // Utilisation de lucide-svelte pour les icônes
+    import { onMount } from 'svelte';
+
     import icon from '../../images/icon.png';
 
-    // Vérifier si l'utilisateur est connecté
-    const isConnected = () => {
-        // Vérifie si le token `jwt` est présent dans localStorage
-        const token = localStorage.getItem('jwt');
-        return Boolean(token); // Retourne true si un token existe, sinon false
-    };
+    let isOpen = false; // État pour gérer l'ouverture/fermeture du menu mobile
 
-    // Gestion du clic sur le bouton
-    const handleProfileClick = () => {
-        if (isConnected()) {
-            goto('/profil'); // Redirige vers la page profil si connecté
-        } else {
-            goto('/login'); // Sinon, redirige vers la page login
-        }
-    };
+    // Données des liens de navigation
+    const navLinks = [
+        { name: 'Accueil', href: '/', icon: Home },
+        { name: 'Suggestions', href: '/suggestions', icon: Lightbulb },
+        { name: 'Poster une Suggestion', href: '/poster-suggestion', icon: PlusCircle },
+        { name: 'Support', href: '/support', icon: LifeBuoy },
+        { name: 'Inscription', href: '/register', icon: UserPlus },
+    ];
+
+    // Fonction pour basculer l'état du menu mobile
+    function toggleMenu() {
+        isOpen = !isOpen;
+    }
+
+    // Fonction pour fermer le menu mobile lors du clic sur un lien
+    function closeMenu() {
+        isOpen = false;
+    }
+
+    // Pour s'assurer que le script est chargé avant d'interagir avec le DOM
+    onMount(() => {
+        // Aucune opération DOM spécifique n'est nécessaire ici pour le moment,
+        // mais onMount est utile pour les interactions futures.
+    });
 </script>
 
-<nav
-  class="bg-gradient-to-b from-indigo-900 to-purple-600 text-white fixed w-full z-10 shadow-lg transition-transform duration-500"
->
-    <div class="container mx-auto px-6 md:px-12 flex items-center justify-between py-4">
-        <!-- Logo -->
-        <a href="/" class="flex items-center space-x-3">
-            <img src={icon} alt="Logo" class="w-10 h-10" />
-            <span class="text-2xl font-bold text-white">IdeaBox</span>
-        </a>
+<nav class="bg-gradient-to-r from-blue-600 to-blue-800 shadow-lg relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
+            <div class="flex-shrink-0 flex items-center">
+                <div class="flex items-center text-white text-2xl font-extrabold tracking-tight">
+                    <img src={icon} alt="Icone" class="w-10"/>
+                </div>
+            </div>
 
-        <!-- Navigation Links -->
-        <div class="flex space-x-6 items-center">
-            <a
-              href="/"
-              class="text-lg font-semibold hover:text-indigo-300 transition-colors duration-300"
-            >Accueil</a
-            >
-            <a
-              href="/suggestions"
-              class="text-lg font-semibold hover:text-indigo-300 transition-colors duration-300"
-            >Suggestions</a
-            >
-            <a
-              href="/poster-suggestion"
-              class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-500 transition"
-            >Poster une suggestion</a
-            >
+            <div class="hidden md:block">
+                <div class="ml-10 flex items-baseline space-x-4">
+                    {#each navLinks as link (link.name)}
+                        <a
+                          href={link.href}
+                          class="text-blue-100 hover:bg-blue-700 hover:text-white
+                         px-3 py-2 rounded-md text-sm font-medium
+                         transition duration-300 ease-in-out transform hover:scale-105
+                         flex items-center group"
+                        >
+                            <svelte:component this={link.icon} class="h-4 w-4 mr-2 text-blue-200 group-hover:text-white transition duration-300" />
+                            {link.name}
+                        </a>
+                    {/each}
+                </div>
+            </div>
 
-            <!-- Bouton à droite (gestion via handleProfileClick) -->
-            <button
-              on:click={handleProfileClick}
-              class="hover:scale-110 transition duration-300 focus:outline-none"
-            >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  class="w-8 h-8 text-white hover:text-indigo-300"
+            <div class="-mr-2 flex md:hidden">
+                <button
+                  on:click={toggleMenu}
+                  type="button"
+                  class="inline-flex items-center justify-center p-2 rounded-md
+                     text-blue-200 hover:text-white hover:bg-blue-700
+                     focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                  aria-controls="mobile-menu"
+                  aria-expanded={isOpen}
                 >
-                    <path
-                      stroke="currentColor"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                    />
-                </svg>
-            </button>
+                    <span class="sr-only">Ouvrir le menu principal</span>
+                    {#if isOpen}
+                        <X class="block h-6 w-6" aria-hidden="true" />
+                    {:else}
+                        <Menu class="block h-6 w-6" aria-hidden="true" />
+                    {/if}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="{isOpen ? 'block' : 'hidden'} md:hidden" id="mobile-menu">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            {#each navLinks as link (link.name)}
+                <a
+                  href={link.href}
+                  class="text-blue-100 hover:bg-blue-700 hover:text-white
+                     block px-3 py-2 rounded-md text-base font-medium
+                     transition duration-300 ease-in-out transform hover:scale-105
+                     flex items-center group"
+                  on:click={closeMenu} >
+                    <svelte:component this={link.icon} class="h-5 w-5 mr-3 text-blue-200 group-hover:text-white transition duration-300" />
+                    {link.name}
+                </a>
+            {/each}
         </div>
     </div>
 </nav>
+
+<style lang="postcss">
+    /* Vous pouvez ajouter des styles globaux ou spécifiques ici si nécessaire */
+    /* Par exemple, pour définir la police Inter si elle n'est pas déjà définie globalement */
+    /*
+		:global(body) {
+			font-family: 'Inter', sans-serif;
+		}
+		*/
+</style>

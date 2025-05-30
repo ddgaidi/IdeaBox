@@ -238,30 +238,43 @@ app.post("/vote", authenticateToken, (req, res) => {
 
 // Route pour s'inscrire
 app.post("/register", async (req, res) => {
-  const { pseudonyme, email, password } = req.body;
+	const { pseudonyme, email, password } = req.body;
 
-  if (!pseudonyme || !email || !password) {
-    return res.status(400).send("Tous les champs sont obligatoires.");
-  }
+	if (!pseudonyme || !email || !password) {
+		return res.status(400).send("Tous les champs sont obligatoires.");
+	}
 
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+	// Vérifier d'abord si le pseudonyme existe
+	db.get('SELECT pseudonyme FROM users WHERE pseudonyme = ?', [pseudonyme], async (err, row) => {
+		if (row) {
+			return res.status(400).send("Ce pseudonyme est déjà utilisé.");
+		}
 
-    db.run(
-      `INSERT INTO users (pseudonyme, email, password) VALUES (?, ?, ?)`,
-      [pseudonyme, email, hashedPassword],
-      (err) => {
-        if (err) {
-          console.error("Erreur lors de l'inscription :", err.message);
-          return res.status(500).send("Erreur lors de l'inscription.");
-        }
-        res.status(201).send("Utilisateur enregistré avec succès.");
-      }
-    );
-  } catch (err) {
-    console.error("Erreur lors de l'inscription :", err.message);
-    res.status(500).send("Erreur serveur.");
-  }
+		// Vérifier si l'email existe
+		db.get('SELECT email FROM users WHERE email = ?', [email], async (err, row) => {
+			if (row) {
+				return res.status(400).send("Cet email est déjà utilisé.");
+			}
+
+			try {
+				const hashedPassword = await bcrypt.hash(password, 10);
+				db.run(
+					`INSERT INTO users (pseudonyme, email, password) VALUES (?, ?, ?)`,
+					[pseudonyme, email, hashedPassword],
+					(err) => {
+						if (err) {
+							console.error("Erreur lors de l'inscription :", err.message);
+							return res.status(500).send("Erreur lors de l'inscription.");
+						}
+						res.status(201).send("Utilisateur enregistré avec succès.");
+					}
+				);
+			} catch (err) {
+				console.error("Erreur lors de l'inscription :", err.message);
+				res.status(500).send("Erreur serveur.");
+			}
+		});
+	});
 });
 
 // Route pour se connecter

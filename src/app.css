@@ -1,7 +1,31 @@
-@import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap');
 
-@layer utilities {
-    body {
-        @apply bg-gradient-to-b from-indigo-900 to-purple-600 min-h-screen;
-    }
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+:root {
+    --scrollbar-track: #f3f4f6;
+    --scrollbar-thumb: #8128c9;
+    --scrollbar-thumb-hover: #8128c9;
+}
+
+/* Barre de défilement */
+body::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+body::-webkit-scrollbar-track {
+    background: var(--scrollbar-track); /* Couleur de la piste */
+}
+
+body::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb); /* Dégradé de la barre */
+    transition: background-color 0.3s ease, filter 0.3s ease;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover); /* Couleur ajustée pour hover */
+    filter: brightness(0.8);
 }
