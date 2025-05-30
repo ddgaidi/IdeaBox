@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Mail, User, MessageSquare, Paperclip, Send, X, AlertCircle } from 'lucide-svelte';
 	import { onDestroy } from 'svelte';
+	import { user } from '$lib/stores/auth';
 
 	type MediaFile = {
 		file: File;
@@ -22,10 +23,15 @@
 		attachments: [],
 	};
 
+	$: if ($user) {
+		formValues.pseudo = $user.pseudo;
+		formValues.email = $user.email;
+	}
+
 	let formSubmitted = false;
 	let submissionMessage = '';
 	const ACCEPTED_FILE_TYPES = "image/*, video/*";
-	const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+	const MAX_FILE_SIZE = 10 * 1024 * 1024;
 	const MAX_ATTACHMENTS = 5;
 
 	let attachmentErrorMessage = '';
@@ -140,6 +146,10 @@
 		submissionMessage = '';
 		attachmentErrorMessage = '';
 		formValues = { pseudo: '', email: '', message: '', attachments: [] };
+		if ($user) {
+			formValues.pseudo = $user.pseudo;
+			formValues.email = $user.email;
+		}
 	}
 
 	onDestroy(() => {

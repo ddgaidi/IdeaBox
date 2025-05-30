@@ -43,7 +43,7 @@
 
             setTimeout(() => {
                 goto('/');
-            }, 1500);
+            }, 500);
 
         } catch (error: unknown) {
             if (error instanceof Error) {
