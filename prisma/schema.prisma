@@ -39,12 +39,12 @@ model Suggestion {
 model Vote {
   userId       String
   suggestionId String
-  type         VoteType // 'LIKE' ou 'DISLIKE'
+  type         VoteType
 
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   suggestion Suggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
 
-  @@id([userId, suggestionId]) // Clé primaire composite
+  @@id([userId, suggestionId])
   @@index([userId])
   @@index([suggestionId])
 }

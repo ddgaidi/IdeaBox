@@ -1,10 +1,9 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { user, isAuthenticated } from '$lib/stores/auth';
-    import '../app.css'; // Assurez-vous que votre CSS global est importé
+    import '../app.css';
 
     onMount(async () => {
-        // Vérifier si nous sommes côté client avant de faire un fetch
         if (typeof window !== 'undefined') {
             try {
                 const response = await fetch('/api/auth/check-session');
@@ -18,7 +17,6 @@
                         isAuthenticated.set(false);
                     }
                 } else {
-                    // Gérer le cas où la session ne peut être vérifiée
                     user.set(null);
                     isAuthenticated.set(false);
                 }

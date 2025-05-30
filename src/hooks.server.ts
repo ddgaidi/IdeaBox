@@ -1,10 +1,8 @@
 import { redirect, type Handle } from '@sveltejs/kit';
-// Importer l'instance partagée de PrismaClient
 import { prisma } from '$lib/server/prisma';
 
 const publicRoutes = ['/', '/login', '/register'];
-// Définir les chemins d'API qui ne nécessitent pas d'authentification
-const publicApiRoutes = ['/api/auth/login', '/api/auth/register']; // Ajoutez ici d'autres routes API publiques si nécessaire
+const publicApiRoutes = ['/api/auth/login', '/api/auth/register'];
 
 export const handle: Handle = async ({ event, resolve }) => {
     const sessionId = event.cookies.get('session');
@@ -30,7 +28,6 @@ export const handle: Handle = async ({ event, resolve }) => {
         console.log('[Hook] No session ID in cookie.');
     }
 
-    // Vérifier si la route est une API publique ou une page publique
     const isPublicRoute = publicRoutes.includes(path);
     const isPublicApiRoute = publicApiRoutes.some(apiPath => path.startsWith(apiPath));
 

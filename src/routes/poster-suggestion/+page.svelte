@@ -8,25 +8,20 @@
 
 <svelte:head>
     <title>Poster - IdeaBox</title>
-    <meta name="description" content="Bienvenue sur ItisGame, votre destination ultime pour des jeux d'arcade en ligne passionnants et un divertissement sans fin. Plongez dans l'action !" />
+    <meta name="description" content="Bienvenue sur IdeaBox ! Votre plateforme pour partager, découvrir et développer des idées innovantes." />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#8128c9" />
+    <meta name="theme-color" content="#155dfc" />
 
-    <!-- Open Graph (Facebook, Discord, etc.) -->
     <meta property="og:title" content="IdeaBox - Poster" />
-    <meta property="og:description" content="Bienvenue sur ItisGame, votre destination ultime pour des jeux d'arcade en ligne passionnants et un divertissement sans fin. Plongez dans l'action !" />
-    <meta property="og:image" content="https://i.ibb.co/Whr94Mp/banner.jpg" />
+    <meta property="og:description" content="Bienvenue sur IdeaBox ! Votre plateforme pour partager, découvrir et développer des idées innovantes." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://itisgame.fr/" />
+    <meta property="og:url" content="https://ideabox.vercel.app/" />
 
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="IdeaBox - Poster" />
-    <meta name="twitter:description" content="Bienvenue sur ItisGame, votre destination ultime pour des jeux d'arcade en ligne passionnants et un divertissement sans fin. Plongez dans l'action !" />
-    <meta name="twitter:image" content="https://i.ibb.co/Whr94Mp/banner.jpg" />
+    <meta name="twitter:description" content="Bienvenue sur IdeaBox ! Votre plateforme pour partager, découvrir et développer des idées innovantes." />
 
-    <!-- Favicon -->
-    <link rel="icon" href="https://i.ibb.co/N27sLxDJ/favicon.png" type="image/png" />
+    <link rel="icon" href="https://i.ibb.co/S4pRHXmM/favicon.png" type="image/png" />
 </svelte:head>
 
 <Navbar />

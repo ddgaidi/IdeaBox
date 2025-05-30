@@ -11,7 +11,6 @@ export async function POST({ request, cookies }) {
             return json({ error: result.error }, { status: 400 });
         }
 
-        // Définir la durée du cookie en fonction de l'option "Rester connecté"
         const maxAge = rememberMe 
             ? 60 * 60 * 24 * 15  // 15 jours
             : 60 * 60 * 2;       // 2 heures

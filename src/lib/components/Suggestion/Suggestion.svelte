@@ -2,7 +2,7 @@
 	export type SuggestionType = {
 		id: string;
 		title: string;
-		description: string; // Conservée pour flexibilité future
+		description: string;
 		likes: number;
 		dislikes: number;
 		userVote?: 'LIKE' | 'DISLIKE' | null;
@@ -14,7 +14,7 @@
 
 <script lang="ts">
 	import { ThumbsUp, ThumbsDown, User, Calendar } from 'lucide-svelte';
-	import { user, isAuthenticated } from '$lib/stores/auth';
+	import { isAuthenticated } from '$lib/stores/auth';
 	import { goto } from '$app/navigation';
 	import { slide } from 'svelte/transition';
 
@@ -24,7 +24,7 @@
 	let currentDislikes = suggestion.dislikes;
 	let currentUserVote = suggestion.userVote;
 	let isLoadingVote = false;
-	let voteError = ''; // Pour afficher une erreur de vote à l'utilisateur
+	let voteError = '';
 
 	function formatDate(dateString: string) {
 		const date = new Date(dateString);
@@ -34,20 +34,19 @@
 	async function handleVote(voteType: 'LIKE' | 'DISLIKE') {
 		if (!$isAuthenticated) {
 			if (confirm('Vous devez être connecté pour voter. Voulez-vous vous connecter ?')) {
-				goto(`/login?redirectTo=/suggestions`);
+				await goto(`/login?redirectTo=/suggestions`);
 			}
 			return;
 		}
 		if (isLoadingVote) return;
 
 		isLoadingVote = true;
-		voteError = ''; // Réinitialiser l'erreur de vote
+		voteError = '';
 
 		const prevLikes = currentLikes;
 		const prevDislikes = currentDislikes;
 		const prevUserVote = currentUserVote;
 
-		// Optimistic update
 		if (currentUserVote === voteType) {
 			if (voteType === 'LIKE') currentLikes--;
 			else currentDislikes--;
@@ -81,7 +80,6 @@
 			} else {
 				currentLikes = data.likes;
 				currentDislikes = data.dislikes;
-				// currentUserVote = data.userVote;
 			}
 		} catch (err) {
 			currentLikes = prevLikes;
@@ -151,12 +149,6 @@
 					<span class="text-sm">{currentDislikes}</span>
 				</button>
 			</div>
-
-			{#if $user && $user.pseudo === suggestion.authorPseudo}
-				<!-- <button class="text-sm text-blue-500 hover:underline flex items-center">
-					 Modifier
-				</button> -->
-			{/if}
 		</footer>
 	</div>
 </article>

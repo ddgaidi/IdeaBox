@@ -5,9 +5,6 @@
 	import { AlertTriangle, CheckCircle, Send } from 'lucide-svelte';
 
 	export let onSuggestionPosted: () => void = () => {
-		// Comportement par défaut modifié pour ne plus utiliser confirm() bloquant
-		// et permettre au message de succès de s'afficher avant une éventuelle redirection.
-		// La redirection peut être gérée par la page parente si nécessaire.
 	};
 
 	let title = '';
@@ -37,8 +34,6 @@
 		if (!$isAuthenticated || !$user) {
 			submissionError = 'Vous devez être connecté pour poster une suggestion.';
 			isSubmitting = false;
-			// Optionnel: rediriger vers login ici si on ne gère pas ça au niveau de la page
-			// goto('/login?redirectTo=/poster-suggestion');
 			return;
 		}
 
@@ -62,12 +57,11 @@
 			title = '';
 			text = '';
 			if (onSuggestionPosted) {
-				onSuggestionPosted(); // Appeler le callback
+				onSuggestionPosted();
 			}
-			// Rediriger après un délai pour voir le message, ou laisser la page parente gérer
 			setTimeout(() => {
-				submissionMessage = ''; // Cacher le message après un délai
-				goto('/suggestions'); // Redirection vers la liste des suggestions
+				submissionMessage = '';
+				goto('/suggestions');
 			}, 3000);
 		} catch (err) {
 			console.error('Erreur lors de la publication de la suggestion :', err);
@@ -142,7 +136,6 @@
 			</div>
 		</form>
 	{:else}
-		<!-- Ce cas ne devrait pas être atteint si la page parente gère l'authentification -->
 		<p class="text-center text-red-500">Vous devez être connecté pour poster une suggestion.</p>
 		<div class="mt-4 text-center">
 			<a href="/login" class="text-blue-600 hover:underline">Se connecter</a>

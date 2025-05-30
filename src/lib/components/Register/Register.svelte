@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { User, Mail, Lock, LogIn, Eye, EyeOff } from 'lucide-svelte'; // Icônes pour les champs et visibilité du mot de passe
+    import { User, Mail, Lock, LogIn, Eye, EyeOff } from 'lucide-svelte';
 
     type SignupFormValues = {
         pseudo: string;
@@ -170,10 +170,9 @@
 </div>
 
 <style>
-    /* Animations d'apparition */
     .animate-fade-in-down {
         animation: fadeInDown 0.8s ease-out forwards;
-        opacity: 0; /* Assurez-vous que l'élément est invisible avant l'animation */
+        opacity: 0;
     }
 
     .animate-fade-in-down.delay-100 {
@@ -182,7 +181,7 @@
 
     .animate-fade-in-up {
         animation: fadeInUp 0.5s ease-out forwards;
-        opacity: 0; /* Assurez-vous que l'élément est invisible avant l'animation */
+        opacity: 0;
     }
 
     @keyframes fadeInDown {

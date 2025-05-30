@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { ArrowRight, UserPlus, Lightbulb, MessageSquare, Award, Loader2, AlertTriangle } from 'lucide-svelte';
-	import SuggestionCard from '$lib/components/Suggestion/Suggestion.svelte'; // Importer le composant de carte
-	import type { SuggestionType } from '$lib/components/Suggestion/Suggestion.svelte'; // Importer le type
+	import SuggestionCard from '$lib/components/Suggestion/Suggestion.svelte';
+	import type { SuggestionType } from '$lib/components/Suggestion/Suggestion.svelte';
 
 	let latestSuggestions: SuggestionType[] = [];
 	let isLoading = true;
 	let errorMessage = '';
 
-	// Données pour les fonctionnalités (peut rester statique ou être dynamisé plus tard)
 	const features = [
 		{
 			icon: Lightbulb,
@@ -54,12 +53,6 @@
 	});
 </script>
 
-<svelte:head>
-	<title>Accueil - Plateforme de Suggestions</title>
-	<meta name="description" content="Bienvenue sur notre plateforme collaborative de suggestions. Proposez, votez et discutez des idées pour améliorer notre communauté." />
-</svelte:head>
-
-<!-- Section Héros -->
 <section class="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white py-20 sm:py-32 px-6 md:px-12 text-center">
 	<div class="max-w-4xl mx-auto">
 		<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 tracking-tight">
@@ -79,7 +72,6 @@
 	</div>
 </section>
 
-<!-- Section Fonctionnalités -->
 <section class="py-16 sm:py-24 bg-gray-50">
 	<div class="max-w-6xl mx-auto px-6 md:px-12">
 		<h2 class="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-4">Comment ça marche ?</h2>
@@ -100,7 +92,6 @@
 	</div>
 </section>
 
-<!-- Section Dernières Suggestions -->
 <section class="py-16 sm:py-24 bg-white">
 	<div class="max-w-6xl mx-auto px-6 md:px-12">
 		<div class="flex flex-col sm:flex-row justify-between items-center mb-12">
@@ -145,7 +136,6 @@
 	</div>
 </section>
 
-<!-- Section Appel à l'action (Inscription) -->
 <section class="py-16 sm:py-24 bg-gray-50">
 	<div class="max-w-4xl mx-auto px-6 md:px-12 text-center">
 		<UserPlus class="h-16 w-16 text-indigo-500 mx-auto mb-6" />

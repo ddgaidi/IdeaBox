@@ -1,7 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma';
 import type { RequestHandler } from './$types';
-import type { VoteType } from '@prisma/client';
 
 export const GET: RequestHandler = async ({ url, locals }) => {
 	try {
@@ -21,17 +20,15 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 				author: {
 					select: { pseudo: true }
 				},
-				votes: locals.user // On inclut les votes de l'utilisateur uniquement s'il est connecté
+				votes: locals.user
 					? { where: { userId: locals.user.id } }
-					: false // Ne pas inclure les votes si l'utilisateur n'est pas connecté
+					: false
 			}
 		});
 
 		const suggestionsWithDetails = suggestionsData.map(s => {
 			let userVoteStatus: 'LIKE' | 'DISLIKE' | null = null;
 			if (locals.user && s.votes && s.votes.length > 0) {
-				// S'il y a un vote par cet utilisateur pour cette suggestion
-				// Note: s.votes sera un tableau, prenez le premier élément s'il existe
 				userVoteStatus = s.votes[0].type as 'LIKE' | 'DISLIKE';
 			}
 
@@ -43,10 +40,8 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 				authorPseudo: s.author.pseudo,
 				likes: s.likes,
 				dislikes: s.dislikes,
-				userVote: userVoteStatus, // Sera null si non connecté ou pas de vote
-				description: '', // Pour la flexibilité future
-				// Retirer s.votes du retour final si ce n'est pas nécessaire côté client directement
-				// et que seul userVoteStatus est utile.
+				userVote: userVoteStatus,
+				description: '',
 			};
 		});
 

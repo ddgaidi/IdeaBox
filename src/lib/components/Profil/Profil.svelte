@@ -7,7 +7,6 @@
         email: ''
     };
 
-    // Mettre à jour currentUser quand $user change
     $: if ($user) {
         currentUser = {
             pseudo: $user.pseudo,
@@ -15,7 +14,6 @@
         };
     }
 
-    // Initialiser newPseudo avec une valeur réactive
     $: newPseudo = currentUser.pseudo;
 
     let pseudoChangeStatus: 'idle' | 'success' | 'error' = 'idle';
@@ -332,7 +330,7 @@
                     </label>
                     <div class="relative rounded-md shadow-sm">
                         <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
-                            <Lock class="h-5 w-5 text-gray-400" />
+                            <Pencil class="h-5 w-5 text-gray-400" />
                         </div>
                         <input
                           type={showNewPassword ? 'text' : 'password'}
@@ -364,7 +362,7 @@
                     </label>
                     <div class="relative rounded-md shadow-sm">
                         <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
-                            <Lock class="h-5 w-5 text-gray-400" />
+                            <Pencil class="h-5 w-5 text-gray-400" />
                         </div>
                         <input
                           type={showConfirmNewPassword ? 'text' : 'password'}
@@ -398,7 +396,7 @@
                 {/if}
                 <button
                   type="submit"
-                  class="w-full cursor-pointer flex items-center justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-lg text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105"
+                  class="w-full cursor-pointer flex items-center justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-lg text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300"
                 >
                     Changer le Mot de Passe
                 </button>
@@ -408,7 +406,6 @@
 </div>
 
 <style>
-    /* Animations d'apparition */
     .animate-fade-in-down {
         animation: fadeInDown 0.8s ease-out forwards;
         opacity: 0;

@@ -5,16 +5,11 @@
 	import { onMount } from 'svelte';
 
 	onMount(() => {
-		// Rediriger si non authentifié pour accéder à cette page
 		if (!$isAuthenticated) {
 			goto('/login?redirectTo=/poster-suggestion');
 		}
 	});
 </script>
-
-<svelte:head>
-	<title>Poster une Suggestion</title>
-</svelte:head>
 
 <section class="min-h-screen text-white pt-10 pb-10 flex items-center justify-center px-6 md:px-12 bg-gradient-to-br from-blue-50 to-white">
 	{#if $isAuthenticated}

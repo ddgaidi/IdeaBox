@@ -22,7 +22,6 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
 
 		const userId = locals.user.id;
 
-		// Vérifier si la suggestion existe
 		const suggestion = await prisma.suggestion.findUnique({
 			where: { id: suggestionId }
 		});
@@ -42,9 +41,7 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
 
 		await prisma.$transaction(async (tx) => {
 			if (existingVote) {
-				// L'utilisateur a déjà voté
 				if (existingVote.type === voteType) {
-					// L'utilisateur clique sur le même vote : on annule le vote
 					await tx.vote.delete({
 						where: { userId_suggestionId: { userId, suggestionId } }
 					});
@@ -55,7 +52,6 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
 						}
 					});
 				} else {
-					// L'utilisateur change son vote
 					await tx.vote.update({
 						where: { userId_suggestionId: { userId, suggestionId } },
 						data: { type: voteType }
@@ -69,7 +65,6 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
 					});
 				}
 			} else {
-				// Nouveau vote
 				await tx.vote.create({
 					data: {
 						userId,
@@ -86,7 +81,6 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
 			}
 		});
 
-		// Récupérer la suggestion mise à jour pour renvoyer les compteurs
 		const updatedSuggestion = await prisma.suggestion.findUnique({
 			where: { id: suggestionId },
 			select: { likes: true, dislikes: true }
@@ -97,7 +91,7 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
 	} catch (error) {
 		console.error('Erreur lors du vote sur la suggestion:', error);
 		// @ts-ignore
-		if (error.code === 'P2003') { // Foreign key constraint failed (e.g. suggestionId doesn't exist)
+		if (error.code === 'P2003') {
 			return json({ error: 'La suggestion référencée n\'existe pas.' }, { status: 404 });
 		}
 		return json({ error: 'Une erreur est survenue lors du vote.' }, { status: 500 });

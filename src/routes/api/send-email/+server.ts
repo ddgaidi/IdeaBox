@@ -33,10 +33,8 @@ export const POST: RequestHandler = async ({ request }) => {
     text: emailContent,
   };
 
-  // Ajout des pièces jointes si elles existent
   if (attachments && attachments.length > 0) {
     mailOptions.attachments = attachments.map((attachment: Attachment) => {
-      // Extraction de la partie base64 (suppression du préfixe data:...)
       const base64Data = attachment.data.split(';base64,').pop();
       
       return {

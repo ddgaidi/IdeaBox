@@ -28,24 +28,21 @@
 	const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 	const MAX_ATTACHMENTS = 5;
 
-	let attachmentErrorMessage = ''; // New state for file upload errors
+	let attachmentErrorMessage = '';
 
-	// Function to show a temporary error message
 	function showAttachmentError(message: string) {
 		attachmentErrorMessage = message;
 		setTimeout(() => {
 			attachmentErrorMessage = '';
-		}, 5000); // Message disappears after 5 seconds
+		}, 5000);
 	}
 
 	async function createMediaPreview(file: File): Promise<MediaFile | null> {
-		// Vérifier le type de fichier
 		if (!file.type.match(/^(image|video)/)) {
 			showAttachmentError('Seules les images et les vidéos sont acceptées.');
 			return null;
 		}
 
-		// Vérifier la taille du fichier
 		if (file.size > MAX_FILE_SIZE) {
 			showAttachmentError('Le fichier est trop volumineux. La taille maximum est de 10MB.');
 			return null;
@@ -66,22 +63,19 @@
 		if (target.files && target.files.length > 0) {
 			const newFiles = Array.from(target.files);
 
-			// Vérifier si le nombre total de fichiers ne dépasse pas MAX_ATTACHMENTS
 			if (formValues.attachments.length + newFiles.length > MAX_ATTACHMENTS) {
 				showAttachmentError(`Vous ne pouvez pas sélectionner plus de ${MAX_ATTACHMENTS} fichiers au total.`);
-				target.value = ''; // Réinitialiser l'input file pour permettre la sélection du même fichier après erreur
+				target.value = '';
 				return;
 			}
 
-			// Traiter tous les fichiers sélectionnés
 			const mediaPromises = newFiles.map(file => createMediaPreview(file));
 			const mediaFiles = await Promise.all(mediaPromises);
 
-			// Filtrer les fichiers invalides et ajouter les nouveaux fichiers valides
 			const validMediaFiles = mediaFiles.filter((file): file is MediaFile => file !== null);
 			formValues.attachments = [...formValues.attachments, ...validMediaFiles];
 		}
-		target.value = ''; // Réinitialiser l'input file pour permettre la sélection du même fichier
+		target.value = '';
 	}
 
 	function removeAttachment(index: number) {
@@ -131,7 +125,6 @@
 			}
 			formSubmitted = true;
 
-			// Nettoyer les URLs des prévisualisations
 			formValues.attachments.forEach(media => URL.revokeObjectURL(media.preview));
 
 		} catch (error) {
@@ -142,15 +135,13 @@
 	}
 
 	function resetForm() {
-		// Nettoyer les URLs des prévisualisations
 		formValues.attachments.forEach(media => URL.revokeObjectURL(media.preview));
 		formSubmitted = false;
 		submissionMessage = '';
-		attachmentErrorMessage = ''; // Clear file error message on reset
+		attachmentErrorMessage = '';
 		formValues = { pseudo: '', email: '', message: '', attachments: [] };
 	}
 
-	// Nettoyer les URLs lors de la destruction du composant
 	onDestroy(() => {
 		formValues.attachments.forEach(media => URL.revokeObjectURL(media.preview));
 	});
@@ -318,7 +309,6 @@
 </div>
 
 <style>
-    /* Animations d'apparition */
     .animate-fade-in-down {
         animation: fadeInDown 0.8s ease-out forwards;
         opacity: 0;

@@ -19,7 +19,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 				title,
 				text,
 				authorId: locals.user.id,
-				// Le pseudonyme de l'auteur sera récupéré via la relation lors de l'affichage
 			}
 		});
 

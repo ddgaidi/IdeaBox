@@ -1,16 +1,12 @@
-import { PrismaClient, Prisma } from '@prisma/client'; // PrismaClient ici est ok pour les types si besoin, mais l'instance sera importée
+import { Prisma } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-// Importer l'instance partagée de PrismaClient
 import { prisma } from '$lib/server/prisma';
 
-// const prisma = new PrismaClient(); // Supprimer cette ligne
-
-// @ts-ignore-unused-function
 export async function registerUser(pseudo: string, email: string, password: string) {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = await prisma.user.create({ // Utilise maintenant l'instance partagée
+        const user = await prisma.user.create({
             data: {
                 pseudo,
                 email,
@@ -41,7 +37,7 @@ interface AuthResult {
 
 export async function loginUser(email: string, password: string): Promise<AuthResult> {
     try {
-        const user = await prisma.user.findUnique({ // Utilise maintenant l'instance partagée
+        const user = await prisma.user.findUnique({
             where: { email }
         });
 

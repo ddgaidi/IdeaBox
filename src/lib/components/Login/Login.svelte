@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Mail, Lock, LogIn as LogInIcon, Eye, EyeOff } from 'lucide-svelte'; // Icônes pour les champs et visibilité du mot de passe
+    import { Mail, Lock, LogIn as LogInIcon, Eye, EyeOff } from 'lucide-svelte';
     import { goto } from '$app/navigation';
     import { user, isAuthenticated } from '$lib/stores/auth';
 
@@ -15,9 +15,9 @@
         rememberMe: false
     };
 
-    let formSubmitted = false; // Cet état n'est pas utilisé dans le template actuel pour la connexion réussie, mais peut être utile pour un message de succès.
-    let submissionMessage = ''; // Pour un message de succès après connexion
-    let submissionError = ''; // Pour les erreurs de connexion
+    let formSubmitted = false;
+    let submissionMessage = '';
+    let submissionError = '';
     let showPassword = false;
 
     async function handleSubmit() {
@@ -32,19 +32,18 @@
 
             if (!response.ok) {
                 submissionError = data.error;
-                formSubmitted = false; // S'assurer que le formulaire reste visible en cas d'erreur
+                formSubmitted = false;
                 return;
             }
 
             user.set(data.user);
             isAuthenticated.set(true);
-            submissionMessage = `Connexion réussie ! Bienvenue ${data.user.pseudo || data.user.email}.`; // Message de succès
-            formSubmitted = true; // Afficher le message de succès
+            submissionMessage = `Connexion réussie ! Bienvenue ${data.user.pseudo || data.user.email}.`;
+            formSubmitted = true;
 
-            // Redirection après un court délai pour que l'utilisateur voie le message de succès
             setTimeout(() => {
                 goto('/');
-            }, 1500); // Redirige après 1.5 secondes
+            }, 1500);
 
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -53,7 +52,7 @@
                 submissionError = "Une erreur inattendue s'est produite";
             }
             console.error('Erreur lors de la connexion:', error);
-            formSubmitted = false; // S'assurer que le formulaire reste visible en cas d'erreur
+            formSubmitted = false;
         }
     }
 
@@ -177,7 +176,6 @@
 </div>
 
 <style>
-    /* Animations d'apparition */
     .animate-fade-in-down {
         animation: fadeInDown 0.8s ease-out forwards;
         opacity: 0;
